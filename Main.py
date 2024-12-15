@@ -566,8 +566,14 @@ def multiplayer(): # multiplayer option
 Splash = pygame.sprite.Group() # Splashscreen Group
 Player = pygame.sprite.Group() # Player Group
 Enemy = pygame.sprite.Group() # Enemy Group
+Menu = pygame.sprite.Group() # Menu Group
 # Branding Objects:
 Company_branding = splash(0,0,Splash) # Company branding object
+# Menu Objects:
+Play  = Button_0(0,0,Menu) # Player object
+Multiplayer = Button_1(0,0,Menu) # Player object
+Server = Button_2(0,0,Menu) # Player object
+Clint = Button_3(0,0,Menu) # Player object
 # Game Objects:
 obj_Player = Object_1(0,0,Player) # Player object
 ####################################################################################################
