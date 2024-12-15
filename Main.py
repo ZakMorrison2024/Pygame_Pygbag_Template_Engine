@@ -66,11 +66,15 @@ Rating_Age = ""
 ##################################################
 dt = 0 # Delta Time/Step-Up Clock
 PAUSE = False
+current_room = 0
+room_width = 0
+room_height = 0
 temporal_measurements = datetime.datetime.now()
 ##################################################
 ### GAME NETWORK:
 ##################################################
 Multiplayer = False
+player_name = ""
 hostname = socket.gethostname()
 My_IP = socket.gethostbyname(hostname)
 PORT = 8080
@@ -86,16 +90,23 @@ SPLASH = True # Splash Window
 MENU = False # Menu Window
 ROOM = False # Room Placeholder
 ##################################################
-### Room: ROOM. defintions: (Room #0)
+### Room: ROOM_0. defintions: (Room #0)
 ##################################################
-room_ROOM_width = 1920
-room_ROOM_height = 1080
+room_ROOM_0_width = 1920
+room_ROOM_0_height = 1080
 Max_Entities = 50
 IN_GAME_TIME = "00:00"
-
 ################################################
+
+
+
+
+
+
+
+
 ##################################################
-# BRANDING:
+## BRANDING:
 ##################################################
 
 ### GAME SPLASH SCREEN OBJECT:
@@ -122,8 +133,9 @@ class splash(pygame.sprite.Sprite):
          pass
 
 ###########################################################################################################################################
-
+##################################################
 ### Classes/Objects (in-Game):
+##################################################
 
 class Object_0(pygame.sprite.Sprite): ### Object Template, showing features one can add to object to define the objects nature and interactions (Non-playable Character Ver.)
    def __init__(self, x, y, *groups): # Intialisation/defintions
@@ -287,15 +299,16 @@ class Object_1(pygame.sprite.Sprite): ### Object Template, showing features one 
 
       keys = pygame.key.get_pressed()
       if keys[pygame.K_w] or keys[pygame.K_UP]:
-        if player.rect.y < room_ROOM_height and player.rect.y >= 0:
+        if player.rect.y < room_height and player.rect.y >= 0:
                            self.rect.y -= 2
      elif keys[pygame.K_d] or keys[pygame.K_RIGHT]:
-        if player.rect.x < room_ROOM_width and player.rect.y >= 0:
+        if player.rect.x < room_width and player.rect.y >= 0:
                            self.rect.x += 2
      elif keys[pygame.K_a] or keys[pygame.K_LEFT]:
-        if player.rect.x < room_ROOM_width and player.rect.y >= 0
+        if player.rect.x < room_width and player.rect.y >= 0
                            self.rect.x -= 2
      elif keys[pygame.K_s] or keys[pygame.K_DOWN]:
+        if player.rect.y < room_height and player.rect.y >= 0:
                            self.rect.y += 2
        
       # Make instance rotate around point (define point by px,py)
