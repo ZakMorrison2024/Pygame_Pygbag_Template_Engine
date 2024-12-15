@@ -171,14 +171,25 @@ class splash(pygame.sprite.Sprite):
       self.rect = self.image.get_rect() # Set Colision Rectangle
       self.rect.x = x # Rect X
       self.rect.y = y # Rect Y
-      self.Life_timer = 0 # Life Timer, used to destroy and continue progression.
    def update(self): # Behaviour loop
-         self.Life_timer += 1 # Life timer
-         if self.Life_timer > 3: # After 3 ticks 
-            global SPLASH, MENU # access in game Variables
-            MENU = True # Change Scene
-            SPLASH = False # End Scene
-         pass
+      pass
+###########################################################################################################################################
+##################################################
+### Classes/Objects (MENU):
+##################################################
+################### Button_0
+class Button_0(pygame.sprite.Sprite): ### Object Template, showing features one can add to object to define the objects nature and interactions (Non-playable Character Ver.)
+   def __init__(self, x, y, *groups): # Intialisation/defintions
+      super().__init__(*groups) 
+      ## Primary image placeholder:
+      self.img_org =[pygame.image.load(abs_cwd_path_ts+os.path.join("/imgs","####-INSERT_NAME_HERE-####.png")))]
+      self.image = self.img_org # Set Default image
+      self.rect = self.image.get_rect() # Set Colision Rectangle
+      self.rect.x = x # Rect X
+      self.rect.y = y # Rect Y
+   def update(self):
+      if self.rect.collidepoint(pygame.mouse.get_pos()): # Check collision with mouse
+         if pygame.mouse.click
 ###########################################################################################################################################
 ##################################################
 ### Classes/Objects (in-Game):
@@ -507,10 +518,6 @@ Company_branding = splash(0,0,Splash)
 # Game Objects:
 obj_NPC = Object_0(rand_random(room_ROOM_width),rand_random(room_ROOM_width),Enemy) # Spawns ONE enemy at random location
 obj_Player = Object_1(10,10,Player) # Spawns player at x:10, y:10 
-# Multi-Spawner
-i ++
-if i < Max_Entities:
-  NPC_MULTI.append(Object_0(rand_random(room_ROOM_width),rand_random(room_ROOM_width),Enemy))
 ####################################################################################################
 ####################################################################################################
 #Audio intialisation (PyGBag has some issues with audio, placeholders from a game I made but you get the point!)
@@ -547,39 +554,59 @@ async def main():
             running = False
             pygame.quit()
             sys.exit()
-      ## For device touch mechaninics:
-      #  if event.type == pygame.FINGERDOWN:
-      #      x = event.x * screen.get_height()
-      #      y = event.y * screen.get_width()
-      #      fingers[event.finger_id] = x, y
-      #  if event.type == pygame.FINGERUP:
-      #      fingers.pop(event.finger_id, None)  
-      #  if event.type == (NEXT_EVENT)
+       ## Pointer inputs:    
+       ## Mouse trigger:    
+        if event.type == pygame.MOUSEBUTTONDOWN:
+           interacted = True
+        if event.type == pygame.MOUSEBUTTONUP:
+           interacted = False
+       ## For device touch mechaninics:
+        if event.type == pygame.FINGERDOWN:
+           interacted = True
+           FD_x = event.x * screen.get_height()
+           FD_y = event.y * screen.get_width()
+           fingers[event.finger_id] = FD_x, FD_y
+        if event.type == pygame.FINGERUP:
+           interacted = False
+           fingers.pop(event.finger_id, None)  
+      # if event.type == (NEXT_EVENT)
       #      pass
       #  ...
       #  ...
 ##################################################
 ##################################################
 ##################################################
- ##### Scene Hyirachy:
+##### Scene Hyirachy:
 ##################################################
     if SPLASH == True:
-        screen.blit(Company_branding,(0,0)) # Small image for publicity 
-        Splash.draw(screen)
-      pass # Splash screen for Branding
+       screen.blit(Company_branding,(0,0)) # Small image for publicity 
+       Splash.draw(screen)
+       if splash_trigger = False: 
+           timer = dt + 30
+           splash_tigger = True
+       if dt > timer:
+         MENU = True # Change Scene
+         SPLASH = False # End Scene
+       pass # Splash screen for Branding
     if MENU == True:
+       
        pass # Menu to select features
     if ROOM == True:
-       if current_room = game_levels[0]:
-            screen.blit(obj_NPC) # Render NPC
-            screen.blit(obj_Player) # Render Player
-            screen.blit(NPC_MULTI) # Render Multi-spawned NPCs
-            Enemy.draw(screen) # Draw Enemy
-            Player.draw(screen) # Draw Player
+       NPC_MULTI = []
+       if current_room == game_levels[0]:
+           for Current_Entities < Max_Entities and i < Total_Entities:
+             # Multi-Spawner
+               i += 1
+               Current_Entities += 1
+               NPC_MULTI.append(Object_0(rand_random(room_ROOM_width),rand_random(room_ROOM_width),Enemy))
+           screen.blit(obj_Player) # Render Player
+           screen.blit(NPC_MULTI) # Render Multi-spawned NPCs
+           Enemy.draw(screen) # Draw Enemy
+           Player.draw(screen) # Draw Player
+           # ...
+       if current_room == game_levels[1]:
             # ...
-      if current_room = game_levels[1]:
-            # ...
-      pass # Main game room
+    pass # Main game room
 ##################################################
 ##################################################
 ##################################################
