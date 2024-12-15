@@ -559,9 +559,10 @@ async def main():
       #  ...
       #  ...
 ##################################################
-   ##################################################
-      ##################################################
-    ## Scene Hyirachy:
+##################################################
+##################################################
+ ##### Scene Hyirachy:
+##################################################
     if SPLASH == True:
         screen.blit(Company_branding,(0,0)) # Small image for publicity 
         Splash.draw(screen)
@@ -569,16 +570,18 @@ async def main():
     if MENU == True:
        pass # Menu to select features
     if ROOM == True:
-       if current_gameroom 
-      screen.blit(obj_NPC) # Render NPC
-      screen.blit(obj_Player) # Render Player
-      screen.blit(NPC_MULTI) # Render Multi-spawned NPCs
-      Enemy.draw(screen) # Draw Enemy
-      Player.draw(screen) # Draw Player
-      # ...
-       pass # Main game room
-      ##################################################
-   ##################################################
+       if current_room[0]:
+            screen.blit(obj_NPC) # Render NPC
+            screen.blit(obj_Player) # Render Player
+            screen.blit(NPC_MULTI) # Render Multi-spawned NPCs
+            Enemy.draw(screen) # Draw Enemy
+            Player.draw(screen) # Draw Player
+            # ...
+      if current_room[1]:
+            # ...
+      pass # Main game room
+##################################################
+##################################################
 ##################################################
 ##################################################
 ##################################################
