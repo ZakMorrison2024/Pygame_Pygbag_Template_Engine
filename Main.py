@@ -1,5 +1,5 @@
-###########################################################################################################################################
-###########################################################################################################################################
+############################################################################################################################################
+############################################################################################################################################
 # /// script
 # requires-python = ">=3.11"
 # dependencies = [
@@ -12,7 +12,8 @@
 #   "socket",
 #   "datetime",
 #   "select",
-#   "asyncio"
+#   "asyncio",
+#   "time"
 # ]
 # ///
 #####################################################
@@ -27,6 +28,7 @@ import sys # System
 import socket # Sockets
 import threading # Multi-threading
 import datetime # date and time
+import time # time
 import select # select
 import asyncio # async
 ###################################################
@@ -60,6 +62,7 @@ abs_cwd_path_ts = os.path.abspath(os.getcwd()) # absolute working directory stri
 width, height = 960, 540 # Default APR: 16:9 1.777, RESO DIMEN: 960 x 540 px (1920 x 1080 % 2), scale resolution by 2.
 FONT = pygame.font.Font(None, 36) # Font
 splash_trigger = False # trigger for splash screen
+actors = [] # list for all NPCs and Players
 ##################################################
 ### GAME NETWORK:
 ##################################################
@@ -89,17 +92,122 @@ class Camera: # Camera Class
         self.camera = pygame.Rect(0, 0, width, height) # Set boundary
         self.room_width = 0 # Default room width
         self.room_height = 0 # Default room height
-   def apply(self, entity):
-        return entity.rect.move(self.camera.topleft) # Return Camera
-   def move_manually(self,vx,vy):
-        x = -vx + int(self.camera.width / 2) # Move Camera along X axis
-        y = -vy + int(self.camera.height / 2) # Move Camera along Y axis
-        x = min(0, x) # Limit Camera along X axis, min
-        y = min(0, y) # Limit Camera along Y axis, min
-        x = max(-(self.room_width - self.camera.width), x)  # Limit Camera along X axis, max
-        y = max(-(self.room_height - self.camera.height), y) # Limit Camera along Y axis, max
-        self.camera = pygame.Rect(x, y, self.camera.width, self.camera.height) # Set boundary
-   def update(self, target_rect):
+        self.target = "" # focus target
+        self.setting = 0 # camera control setting
+        keys = pygame.key.get_pressed() # check keyboard
+
+        # camera control select:
+        #setting 1:
+        if keys[pygame.K_1] and self.setting != 1: # key no.1
+            self.setting = 1 # freemouse - control using mouse
+        elif keys[pygame.K_1] and self.setting == 1:
+            self.setting = 0
+            #setting 2:
+        if keys[pygame.K_2] and self.setting != 2: # key no.2
+            self.setting = 2 # freehand - control using keys
+        elif keys[pygame.K_2] and self.setting == 2:
+            self.setting = 0
+            #setting 3:
+        if keys[pygame.K_3] and self.setting != 3: # key no.3
+            self.setting = 3 # Focus_target - view stays on target
+        elif keys[pygame.K_3] and self.setting == 3:
+            self.setting = 0
+           #setting 4:
+        if keys[pygame.K_4] and self.setting != 4: # key no.4
+            self.setting = 4 # cycle_actors(incremental)
+        elif keys[pygame.K_4] and self.setting == 4:
+            self.setting = 0
+            #setting 5:
+        if keys[pygame.K_5] and self.setting != 5: # key no.5
+            self.setting = 5 # cycle_actors(decremental)
+        elif keys[pygame.K_5] and self.setting == 5:
+            self.setting = 0
+            #setting 6:
+        if keys[pygame.K_6] and self.setting != 6: # key no.6
+            self.setting = 6 # cycle_actors(decremental)
+        elif keys[pygame.K_6] and self.setting == 6:
+            self.setting = 0
+
+        # changing setting and view behaviour    
+        if self.setting == 0:
+           if self.target == actors[0]:
+                self.focus_target(self.target) ## setting 0: Focus on Player
+        if self.setting == 1:
+            self.freemouse() ## setting 1: free mouse movement
+        if self.setting == 2:
+            self.freekey() ## setting 2: free key movement
+        if self.setting == 3:
+            self.find_target(self.rect.x,self.rect.y) ## setting 3: find closest living thing
+            self.focus_target(self.target)
+        if self.setting == 4:
+            j += 1
+            self.cycle_actors(j) ## setting 4: increment living things
+        if self.setting == 5:
+            j -= 1
+            self.cycle_actors(j) ## setting 5: decrement living thing 
+        if self.setting == 6:
+            self.reset() ## setting 6: reset camera to top left
+
+   def reset(self):
+        return self.rect.move(self.camera.topleft) # Return Camera
+   
+   def find_target(self,x,y):
+       potential_people = [] # potential people list
+       distance = [] # distance measure list
+       intial_scan = 1 # scanning everyone but player
+       end_scan_former = 0 # end scan slow
+       end_scan_later = 0 # end scan fast
+       first_number_cycle = 1 # first index cycler
+       second_number_cycle = 2 # second index cycle
+       third_number_cycle = 3 # third index cycle
+       while intial_scan < len(actors): # intial scan hasn't reached the end
+         indiv = actors.index[intial_scan] # add actors to indiv 
+         potential_people.append(indiv, indiv.rect.x - x, indiv.rect.y - y) # add indiv along with their coordinates, minus that of the cameras
+         intial_scan += 1 ## increment intial scan
+       if len(potential_people) > 5: ## potential people has atleast 6 indexes 
+         if first_number_cycle % 3 and first_number_cycle <= len(potential_people): # first index cycler
+            first_number_cycle += 3 # increase by three to skip unwanted entires
+         if second_number_cycle % 2 and second_number_cycle <= len(potential_people): # second index cycler
+            second_number_cycle += 3  # increase by three to skip unwanted entires
+         if third_number_cycle % 3 and third_number_cycle <= len(potential_people): # third index cycler
+            third_number_cycle += 3 # increase by three to skip unwanted entires
+       distance.append(math.sqrt(potential_people[second_number_cycle]**2 + potential_people[third_number_cycle]**2))# list distances
+       if first_number_cycle >= len(potential_people): # when the slowest cycler is above len
+           end_scan_former += 1 # increment slow scan
+           end_scan_later += 2 # increment fast scan
+           if (distance[end_scan_former] > distance[end_scan_later] and distance[end_scan_former] != 0 and distance[end_scan_later] != 0) or  (distance[end_scan_later] > distance[end_scan_former] and distance[end_scan_former] != 0 and distance[end_scan_later] != 0) : # compare scans
+                distance.pop(distance[end_scan_former]) # remove larger entries
+           if len(distance) == 1: # when length of list is one
+                self.target = distance[0] # make that actor the target  
+
+   def freemouse(self): # free mouse look
+            if pygame.mouse.get_pressed(3): #middle mouse button
+                button += 1 #increment button
+                mx,my = pygame.mouse.get_pos() # click coordinates
+                time.sleep(1) # wait 1 milisecond
+                if button < 2: # if no second press
+                    nx,ny = pygame.mouse.get_pos() # new mouse coordinates
+                    dif_x = nx - mx # find x difference
+                    dif_y = ny - my # find y difference
+                    self.rect.y + dif_x # move x
+                    self.rect.y + dif_y # move y
+
+   def freekey(self): # free key
+            keys = pygame.key.get_pressed() # assign keys
+            if keys[pygame.K_w] or keys[pygame.K_UP]: # if up or W
+                 if self.rect.y < room_height and self.rect.y > 0: # if within restriction
+                           self.rect.y -= 2 # move up
+            if keys[pygame.K_d] or keys[pygame.K_RIGHT]: # if right or D
+                 if self.rect.x < room_width and self.rect.x > 0: # if within restriction
+                           self.rect.x += 2 # move right
+            if keys[pygame.K_a] or keys[pygame.K_LEFT]: # if left or A
+                 if self.rect.x < room_width and self.rect.x > 0: # if within restriction
+                           self.rect.x -= 2 # move left
+            if keys[pygame.K_s] or keys[pygame.K_DOWN]: # if down or S
+                 if self.rect.y < room_height and self.rect.y > 0: # if within restriction
+                           self.rect.y += 2 # move down
+
+   def focus_target(self, target_rect):
         x = -target_rect.centerx + int(self.camera.width / 2) # Move Camera along X axis, following target
         y = -target_rect.centery + int(self.camera.height / 2) # Move Camera along Y axis, following target
         x = min(0, x) # Limit Camera along X axis, min
@@ -107,9 +215,14 @@ class Camera: # Camera Class
         x = max(-(self.room_width - self.camera.width), x) # Limit Camera along X axis, max
         y = max(-(self.room_height - self.camera.height), y) # Limit Camera along Y axis, max
         self.camera = pygame.Rect(x, y, self.camera.width, self.camera.height)  # Set boundary
+
+   def cycle_actors(self,j): # cycle actors
+       self.focus_target(actors[j]) # focus target to next increment or decremented actor   
+
    def set_room_size(self, width, height):
         self.room_width = width # Set room width
         self.room_height = height # Set room height
+
 camera = Camera(width,height) # intiate camera, set resolusion to default game resolution
 ##################################################
 ### Room: ROOM_0. defintions: (Room/Level #0)
@@ -160,9 +273,9 @@ dt = 0 # Delta Time/Step-Up Clock
 PAUSE = False # For the Pause menu
 interacted = False # Variable to know if a pointer had pressed
 game_levels = [room_0(),room_1()] # List of all avalible levels
-current_room = "splash_room" # To know which stage we're on
-room_width = current_room.width # Change Room Dimension
-room_height = current_room.height # Change Room Dimension
+current_room = ("splash_room", width(960), height(540)) # To know which stage we're on
+room_width = current_room[1] # Change Room Dimension
+room_height = current_room[2] # Change Room Dimension
 temporal_measurements = datetime.datetime.now() # Find Date
 splash_trigger = False # Splash trigger
 ##################################################
@@ -363,6 +476,7 @@ class Object_1(pygame.sprite.Sprite): ### Object Template, showing features one 
       self.attacking = False # whether the object is attacking
       self.dead = False # whether object is dead
       # Locals
+      self.target = 0 # Player target
       self.health = 100 # object life
       self.speed = 3 # object speed
       self.value = 20 # object value
@@ -450,9 +564,9 @@ running = True # game running
    # Server:
    ##################################################
  #####################
-def handle_client(client_socket, client_address, client_message, dt):
+def handle_client(client_socket, client_address, logs):
    message = client_socket.recv(1024).decode() # recieved 1024 bit socket/buffer
-   client[client_address].start_client_timer(dt+120, client_socket) # reset users in-activity timer
+   start_client_timer(dt+120,client_socket,client_address) # reset users in-activity timer
    print(f"Player {client_address} said: {message}") # print message
    logs[client_address].append(message) # add to logs
    tot_log = len(list(logs.keys())) # find total logs size
@@ -461,15 +575,21 @@ def handle_client(client_socket, client_address, client_message, dt):
    else:
       key_value_log = logs[list(logs.keys())[0]] # else use the 0th one
 # Send result back to all players
-   for client in logs.keys():
+   for client_address in logs.keys():
       client_socket.send(key_value_log.encode()) # Send data to other clients
+      print("sent to: " + client_address)
+
+   if message.read == int:
+       network_action(int(message))
+       
+
  #####################
 def start_server():
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM) # establish connection
     server.bind((My_IP, PORT)) # combine ip + port
     print(My_IP +":"+ PORT)  # print it 
     server.listen(max_clients) # start server
-    print("Server listening on port: " +str(PORT)) # ping port
+    print("Server now listening on port: " +str(PORT)) # ping port
     while True:
         client_socket, client_address = server.accept() # if joined
         print(f"Player connected from {client_address}") # establish connection
@@ -477,18 +597,20 @@ def start_server():
         threading.Thread(target=handle_client, args=(client_socket, client_address, logs)).start() # thread for game
         pass
  #####################
-def start_client_timer(dt,duration,client_socket):
+def start_client_timer(duration,client_socket, client_address):
    if dt > duration: # if delta time greater than timer
-      check_client_timeout(client_socket) # probe user
+      check_client_timeout(client_socket, client_address) # probe user
 #####################
-def check_client_timeout(client_socket): # Test for time out
+def check_client_timeout(client_socket, client_address): # Test for time out
       try:
-         for client in logs.keys(): # if client in logs
+         for client_address in logs.keys(): # if client in logs
           client_socket.send(b"PING") # ping them
           return True # if good, leave to enjoy game
       except socket.error:
          client_socket.close() # else close connection
          return False
+      if True:
+            start_client_timer(dt+120,client_socket, client_address)
    ##################################################
    # Client:
    ##################################################
@@ -522,10 +644,13 @@ def recv_message(message): # recieved message
             s.setblocking(0) # stop blocking sockets
             readable, writable, errored = select.select([s], [], [], 0) # is readable buffer
             if readable:
-                recv_message = s.recv(1024).decode() # read message
-                return see_message(recv_message) # read message
+                message = s.recv(1024).decode() # read message
+                if message == str:
+                    return see_message(message) # read message
+                elif message == int:
+                    network_action(int(message))
     except Exception as e:
-       send_message(My_IP +" | "+ temporal_measurements +" : "+"404, Didn't get last message.")
+       send_message(My_IP +" | "+ temporal_measurements +" : "+"| 404: Didn't get last message.")
        return "Error: Unable to recieve data from server."
     except BlockingIOError:
        s.setblocking(0)# stop blocking
@@ -533,6 +658,8 @@ def recv_message(message): # recieved message
    ##################################################
    # Client and Server:
    ##################################################
+def network_action(message):
+    pass
 def see_message(message): ## see new message
    if message: # if message
             result_text = FONT.render(message, True, RED) # render
@@ -544,10 +671,10 @@ def multiplayer(): # multiplayer option
       online_host_port = input("Type in PORT of HOST") # ask for port
       if online_host_address:
         if online_host_port: # if successful
-            send_message(My_IP +" | "+ temporal_measurements +" : "+"I have connected! Thanks for having me.") # connect
+            send_message(My_IP +" | "+ temporal_measurements +" : "+"| 200: I have connected! Thanks for having me.") # connect
 ################### Server_side
    if Server == True: # if server
-      PORT = input("Please pick a port number i.e. 8080 or 5050") # ask for port
+      PORT = input("Please pick a port number i.e. 8080 or 5050, etc etc...") # ask for port
       start_server() # start_server
       print(My_IP) # show IP
       print(PORT) # show PORT
@@ -637,10 +764,10 @@ async def main(): # Start of game loop
        Splash.draw(screen) # Draw splash
        if splash_trigger == False: # if trigger activated
            timer = dt + 30   # set timer
-           splash_tigger = True # cancel trigger
+           splash_trigger = True # cancel trigger
        if dt > timer: # if timer runs out
          MENU = True # Change Scene
-         current_room = "menu_room" # change current_room
+         current_room = ("menu_room",960,540) # change current_room
          SPLASH = False # End Scene
        pass # Splash screen for Branding
     if MENU == True: # if MENU room is true
