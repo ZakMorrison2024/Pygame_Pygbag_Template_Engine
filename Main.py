@@ -77,8 +77,13 @@ def draw_debug_info(surface, info_dict, x=10, y=10, line_height=20):
         text_surface = font.render(p, True, GREEN)
         surface.blit(text_surface, (x, y + p * line_height))
         selection = input("Please write the menu you wish to see.")
-    for i, (key, value) in enumerate(selection.items()):
-        text = f"{key}: {value}"
+        if selection == Object_0:
+            num = input("Type the number of the instance you want to view.")   
+            for i, (key, value) in enumerate(selection[num].items()):
+             text = f"{key}: {value}"
+        if selection != Object_0:
+            for i, (key, value) in enumerate(selection.items()):
+             text = f"{key}: {value}"
         text_surface = font.render(text, True, GREEN)
         surface.blit(text_surface, (x, y + i * line_height))
 ##################################################
