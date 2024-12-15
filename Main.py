@@ -159,6 +159,7 @@ current_room = "splash_room" # To know which stage we're on
 room_width = current_room.width # Change Room Dimension
 room_height = current_room.height # Change Room Dimension
 temporal_measurements = datetime.datetime.now() # Find Date
+splash_trigger = False # Splash trigger
 ##################################################
 ## BRANDING:
 ##################################################
@@ -465,49 +466,50 @@ def send_message(message):
                else:
                    print("No data received.")
                 except BlockingIOError:
-                 s.setblocking(0)
+                 s.setblocking(0) # turn off block if on
                  print("No data available (BlockingIOError).")
                 except Exception as e:
                  print(f"An error occurred: {e}")
                    pass
        except Exception as e:
          print (f"Error: Unable to connect to server. {e}")
-                  pass
+                  pass # error handling
  #####################
-def recv_message(message):
+def recv_message(message): # recieved message
     try:
-        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-            s.setblocking(0)
-            readable, writable, errored = select.select([s], [], [], 0)
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s: # establish connection
+            s.setblocking(0) # stop blocking sockets
+            readable, writable, errored = select.select([s], [], [], 0) # is readable buffer
             if readable:
-            recv_message = s.recv(1024).decode()
-            return see_message(recv_message)
+            recv_message = s.recv(1024).decode() # read message
+            return see_message(recv_message) # read message
     except Exception as e:
+       send_message(My_IP +" | "+ temporal_measurements +" : "+"404, Didn't get last message.")
        return "Error: Unable to recieve data from server."
     except BlockingIOError:
-       s.setblocking(0)
-       send_message(My_IP +" | "+ temporal_measurements +" : "+"404, didn't get last message.")
+       s.setblocking(0)# stop blocking
+       pass
  #####################
    ##################################################
    # Client and Server:
    ##################################################
-def see_message(message):
-   if message:
-            result_text = FONT.render(message, True, RED)
+def see_message(message): ## see new message
+   if message: # if message
+            result_text = FONT.render(message, True, RED) # render
       #####################
-def multiplayer():
+def multiplayer(): # multiplayer option
 ################### Client_side
-   if Client == True:
-      online_host_address = input("Type in IP of HOST")
-      online_host_port = input("Type in PORT of HOST")
-      if online_host_address, online_host_host:
-         send_message(My_IP +" | "+ temporal_measurements +" : "+"I have connected! Thanks for having me.")
+   if Client == True: # if client true
+      online_host_address = input("Type in IP of HOST") # ask for ip
+      online_host_port = input("Type in PORT of HOST") # ask for port
+      if online_host_address, online_host_host: # if successful
+         send_message(My_IP +" | "+ temporal_measurements +" : "+"I have connected! Thanks for having me.") # connect
 ################### Server_side
-   if Server == True:
-      PORT = input("Please pick a port number i.e. 8080 or 5050")
-      start_server()
-      print(My_IP)
-      print(PORT)
+   if Server == True: # if server
+      PORT = input("Please pick a port number i.e. 8080 or 5050") # ask for port
+      start_server() # start_server
+      print(My_IP) # show IP
+      print(PORT) # show PORT
      #####################
 ##################################################
 ####################################################################################################
@@ -516,14 +518,13 @@ def multiplayer():
 ####################################################################################################
 ####################################################################################################
 #Groups:
-Splash = pygame.sprite.Group()
-Player = pygame.sprite.Group()
-Enemy = pygame.sprite.Group()
+Splash = pygame.sprite.Group() # Splashscreen Group
+Player = pygame.sprite.Group() # Player Group
+Enemy = pygame.sprite.Group() # Enemy Group
 # Branding Objects:
-Company_branding = splash(0,0,Splash)
+Company_branding = splash(0,0,Splash) # Company branding object
 # Game Objects:
-obj_NPC = Object_0(rand_random(room_ROOM_width),rand_random(room_ROOM_width),Enemy) # Spawns ONE enemy at random location
-obj_Player = Object_1(10,10,Player) # Spawns player at x:10, y:10 
+obj_Player = Object_1(0,0,Player) # Player object
 ####################################################################################################
 ####################################################################################################
 #Audio intialisation (PyGBag has some issues with audio, placeholders from a game I made but you get the point!)
@@ -548,33 +549,33 @@ obj_Player = Object_1(10,10,Player) # Spawns player at x:10, y:10
 ##################################################
 ##################################################
 ##################################################
-async def main():
+async def main(): # Start of game loop
     #Globals (to reach inside game loop):
-    global dt
+    global dt # delta time
    ##################################################
     #Event System/Control System:
    ##################################################
-    while running:
-     for event in pygame.event.get():
-        if event.type == QUIT:
-            running = False
+    while running: # while game is on
+     for event in pygame.event.get(): # highlight events
+        if event.type == QUIT: # if event == quit
+            running = False # close game
             pygame.quit()
             sys.exit()
        ## Pointer inputs:    
        ## Mouse trigger:    
-        if event.type == pygame.MOUSEBUTTONDOWN:
-           interacted = True
-        if event.type == pygame.MOUSEBUTTONUP:
-           interacted = False
+        if event.type == pygame.MOUSEBUTTONDOWN: # if event is mouse button pressed
+           interacted = True # interacted == true
+        if event.type == pygame.MOUSEBUTTONUP: # if event is mouse button released
+           interacted = False # interacted == false
        ## For device touch mechaninics:
-        if event.type == pygame.FINGERDOWN:
-           interacted = True
-           FD_x = event.x * screen.get_height()
-           FD_y = event.y * screen.get_width()
-           fingers[event.finger_id] = FD_x, FD_y
-        if event.type == pygame.FINGERUP:
-           interacted = False
-           fingers.pop(event.finger_id, None)  
+        if event.type == pygame.FINGERDOWN: # if event is touch event pressed
+           interacted = True # it has been interacted with
+           FD_x = event.x * screen.get_height() # record X position of finger
+           FD_y = event.y * screen.get_width() # record y position of finger
+           fingers[event.finger_id] = FD_x, FD_y # store in list
+        if event.type == pygame.FINGERUP: # if event is touch event released
+           interacted = False # not interacting with
+           fingers.pop(event.finger_id, None) # remove x/y data
       # if event.type == (NEXT_EVENT)
       #      pass
       #  ...
@@ -584,35 +585,47 @@ async def main():
 ##################################################
 ##### Scene Hyirachy:
 ##################################################
-    if SPLASH == True:
+    if SPLASH == True: # Splash scene for Branding
        screen.blit(Company_branding,(0,0)) # Small image for publicity 
-       Splash.draw(screen)
-       if splash_trigger = False: 
-           timer = dt + 30
-           splash_tigger = True
-       if dt > timer:
+       Splash.draw(screen) # Draw splash
+       if splash_trigger = False: # if trigger activated
+           timer = dt + 30   # set timer
+           splash_tigger = True # cancel trigger
+       if dt > timer: # if timer runs out
          MENU = True # Change Scene
          current_room = "menu_room" # change current_room
          SPLASH = False # End Scene
        pass # Splash screen for Branding
-    if MENU == True:
-       
+    if MENU == True: # if MENU room is true
+       ####
        pass # Menu to select features
-    if ROOM == True:
-       NPC_MULTI = []
-       if current_room == game_levels[0]:
-           for Current_Entities < Max_Entities and i < Total_Entities:
+    if ROOM == True: # IF Game Room is True
+       NPC_MULTI = [] # Registrat for NPCs
+       if current_room == game_levels[0]: # if level one
+           for Current_Entities < Max_Entities and i < Total_Entities: # if there currently less NPC in view and less than the total in the map
              # Multi-Spawner
-               i += 1
-               Current_Entities += 1
-               NPC_MULTI.append(Object_0(rand_random(room_ROOM_width),rand_random(room_ROOM_width),Enemy))
+               i += 1 # increade by one
+               Current_Entities += 1 # increase by one
+               NPC_MULTI.append(Object_0(rand_random(room_ROOM_width),rand_random(room_ROOM_width),Enemy)) ## add enemy/NPC
+           elif i == Total_Enitites or i > Total_Entities:
+                  current_room = game_levels[1]  
            screen.blit(obj_Player) # Render Player
            screen.blit(NPC_MULTI) # Render Multi-spawned NPCs
            Enemy.draw(screen) # Draw Enemy
            Player.draw(screen) # Draw Player
            # ...
        if current_room == game_levels[1]:
-            # ...
+           for Current_Entities < Max_Entities and i < Total_Entities: # if there currently less NPC in view and less than the total in the map
+             # Multi-Spawner
+               i += 1 # increade by one
+               Current_Entities += 1 # increase by one
+               NPC_MULTI.append(Object_0(rand_random(room_ROOM_width),rand_random(room_ROOM_width),Enemy)) ## add enemy/NPC
+           elif i == Total_Enitites or i > Total_Entities:
+                  current_room = game_levels[1]  
+           screen.blit(obj_Player) # Render Player
+           screen.blit(NPC_MULTI) # Render Multi-spawned NPCs
+           Enemy.draw(screen) # Draw Enemy
+           Player.draw(screen) # Draw Player
     pass # Main game room
 ##################################################
 ##################################################
@@ -623,7 +636,7 @@ async def main():
     ## Final Render/Utility/Debug
 ##################################################
     dt = clock.tick(60)/1000 # Delta Time counting up from tik
-    print(dt)
+    print(dt) # show delta time
     pygame.display.flip() # Display render for PyGBag
     await asyncio.sleep(0)  # Very important, and keep it 0
 ######################################################################################################################################################
