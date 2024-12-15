@@ -718,8 +718,8 @@ async def main(): # Start of game loop
            elif i == Total_Enitites or i > Total_Entities:
                   current_room = game_levels[1] 
                   i = 0
-           screen.blit(obj_Player,room_width/2,room_height/2) # Render Player
-           screen.blit(NPC_MULTI,spawn_points_enemies[rand.randomint(no_of_spawn_points)].x,spawn_points_enemies[rand.randomint(no_of_spawn_points)].y) # Render Multi-spawned NPCs
+           screen.blit(Player_control,room_width/2,room_height/2) # Render Player
+           screen.blit(Enemy,spawn_points_enemies[rand.randomint(no_of_spawn_points)].x,spawn_points_enemies[rand.randomint(no_of_spawn_points)].y) # Render Multi-spawned NPCs
            Enemy.draw(screen) # Draw Enemy
            Player_control.draw(screen) # Draw Player
            # ...
