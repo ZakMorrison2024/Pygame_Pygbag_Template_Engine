@@ -516,3 +516,30 @@ asyncio.run(main()) ## run program
 ######################################################################################################################################################
 ######################################################################################################################################################
 ######################################################################################################################################################
+####################
+### Mechanics:
+###################
+# Core Gameplay:
+#   Describe the primary mechanics and systems that drive the gameplay experience (e.g., combat, exploration, puzzles, etc.).
+# Controls:
+#   Explain the control scheme and how the player interacts with the game (e.g., keyboard, mouse, gamepad, touch controls).
+# Progression:
+#   How does the player progress through the game? This could include leveling up, unlocking new areas, or advancing the story.
+# Difficulty:
+#   What is the game's difficulty level like? Are there different difficulty settings, or does the game adapt to the player's skill level?
+# Rewards:
+#   What rewards or incentives does the player receive for achieving certain goals (e.g., in-game items, achievements, story progression)?
+# Combat/Interactions (if applicable):
+#   Describe any combat mechanics, abilities, or interactions with the game world (e.g., weapon mechanics, skills, puzzles, NPC interactions).
+# AI Behavior (if applicable):
+#   How does the artificial intelligence behave in the game? For example, enemy AI tactics, companion behaviors, or world events.
+# Multiplayer (if applicable):
+#   If the game has multiplayer, explain the mechanics involved (e.g., co-op, PvP, matchmaking, etc.).
+# Replayability:
+#   What features encourage players to replay the game (e.g., multiple endings, side quests, procedural generation)?
+# Special Features:
+#   Highlight any unique mechanics or features that set your game apart, such as time manipulation, unique movement mechanics, or innovative UI design.
+#####################
+######################################################################################################################################################
+######################################################################################################################################################
+######################################################################################################################################################
