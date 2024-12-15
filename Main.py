@@ -68,8 +68,10 @@ DEBUG_MODE = False
 
 keys = pygame.key.get_pressed()
 
-if keys[pygame.K_LCTRL]:
+if keys[pygame.K_LCTRL] and DEBUG_MODE == False:
     DEBUG_MODE = True
+elif keys[pygame.K_LCTRL] and DEBUG_MODE == True:
+    DEBUG_MODE = False
 
 def draw_debug_info(surface, info_dict, x=10, y=10, line_height=20):
     font = pygame.font.Font(None, 36) # Font #1
@@ -148,6 +150,7 @@ PORT = 8080 # Player Port
 Server = False # Server Mode
 Client = False # Client Mode
 max_clients = 8 # Max number of connections
+no_of_clients = 0 # How many clients are active
 online_host_address = "" # Server IP address
 online_host_port = "" # Server PORT number
 logs = [] # logs for server
@@ -813,6 +816,8 @@ def start_server():
     while True:
         client_socket, client_address = server.accept() # if joined
         print(f"Player connected from {client_address}") # establish connection
+        if client_address not in logs:
+            no_of_clients += 1
         client_socket.setblocking(0) # turn off blocking
         threading.Thread(target=handle_client, args=(client_socket, client_address, logs)).start() # thread for game
         pass
@@ -828,6 +833,7 @@ def check_client_timeout(client_socket, client_address): # Test for time out
           return True # if good, leave to enjoy game
       except socket.error:
          client_socket.close() # else close connection
+         no_of_clients -= 1
          return False
       if True:
             start_client_timer(dt+120,client_socket, client_address)
@@ -879,7 +885,12 @@ def recv_message(message): # recieved message
    # Client and Server:
    ##################################################
 def network_action(message):
-    pass
+    if message == int:
+        if message == 1:
+           pass
+        if message == 2:
+           pass 
+##################
 def see_message(message): ## see new message
    if message: # if message
             result_text = FONT.render(message, True, RED) # render
@@ -1046,8 +1057,9 @@ async def main(): # Start of game loop
         "Connected Port: ", online_host_port,
         "Server Mode: ", Server,
         "Max Clients: ", max_clients,
-        "Current Clients: ", len(logs),
-        "Logs :", logs]
+        "Last Message: ", see_message(logs[len(logs)]),
+        "Current Clients: ", no_of_clients,
+        "Logs :", logs.readline]
 
      
      debug_GAME = [
