@@ -26,7 +26,7 @@ import sys
 #Pre-defintions: (remove if unwanted, added for consideration.)
 
 ###################################################
-#Colours:
+# Colours:
 ##################################################
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
@@ -40,10 +40,11 @@ BLUE = (0,0,255)
 abs_cwd_path_ts = os.path.abspath(os.getcwd())
 ################################################
 
+###################################################
 # GLOBAL VARIABLES:
-##########################
-
+##################################################
 ### GAME DESCRIPTIVE:
+##################################################
 Author = ""
 co-Author = []
 Title = ""
@@ -54,24 +55,30 @@ M_O_R = ""
 D_O_R = ""
 Contact = []
 Rating_Age = ""
-
+##################################################
 ### GAME MECHANICAL:
+##################################################
 dt = 0 # Delta Time/Step-Up Clock
-
+##################################################
 ### GAME SCENES/ROOMS:
+##################################################
 SPLASH = True # Splash Window
 MENU = False # Menu Window
 ROOM = False # Room Placeholder
-
-### Room: ROOM. defintions:
+##################################################
+### Room: ROOM. defintions: (Room #0)
+##################################################
 room_ROOM_width = 1920
 room_ROOM_height = 1080
 Max_Entities = 50
 IN_GAME_TIME = "00:00"
 
 ################################################
+##################################################
+# BRANDING:
+##################################################
 
-### GAME SPLASH SCREEN OBJECT - For branding
+### GAME SPLASH SCREEN OBJECT:
 class splash(pygame.sprite.Sprite): 
    def __init__(self, x, y, *groups): # Intialisation/defintions
       super().__init__(*groups) 
