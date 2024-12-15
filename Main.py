@@ -64,11 +64,16 @@ Rating_Age = ""
 ##################################################
 dt = 0 # Delta Time/Step-Up Clock
 PAUSE = False
-
+##################################################
+### GAME NETWORK:
+##################################################
 Multiplayer = False
-My_IP = ""
+hostname = socket.gethostname()
+My_IP = socket.gethostbyname(hostname)
 Server = False
 Client = False
+Clients = []
+online_host_address = ""
 ##################################################
 ### GAME SCENES/ROOMS:
 ##################################################
