@@ -422,7 +422,11 @@ def see_message(message):
             result_text = FONT.render(message, True, RED)
       #####################
 
+def multiplayer():
+   if Client == True:
 
+   if Server == True:
+      start_server()
 
 ##################################################
 ####################################################################################################
