@@ -570,10 +570,10 @@ Menu = pygame.sprite.Group() # Menu Group
 # Branding Objects:
 Company_branding = splash(0,0,Splash) # Company branding object
 # Menu Objects:
-Play  = Button_0(0,0,Menu) # Player object
-Multiplayer = Button_1(0,0,Menu) # Player object
-Server = Button_2(0,0,Menu) # Player object
-Clint = Button_3(0,0,Menu) # Player object
+Play_button = Button_0(0,0,Menu) # Play_button
+Multiplayer_button = Button_1(0,0,Menu) # Multiplayer_button
+Server_button = Button_2(0,0,Menu) # Server_button
+Client_button = Button_3(0,0,Menu) # Client_button
 # Game Objects:
 obj_Player = Object_1(0,0,Player) # Player object
 ####################################################################################################
@@ -648,7 +648,13 @@ async def main(): # Start of game loop
          SPLASH = False # End Scene
        pass # Splash screen for Branding
     if MENU == True: # if MENU room is true
-       ####
+       if Multiplayer == False:
+          screen.blit(Play_button,(420,200)) # Play_Button 
+          screen.blit(Multiplayer_button,(420,280)) # Multiplayer_Button
+       if Multiplayer == True:
+          screen.blit(Server_button,(420,200)) # Server_Button 
+          screen.blit(Client_button,(420,280)) # Client_Button
+       Menu.draw(screen) # Draw splash
        pass # Menu to select features
     if ROOM == True: # IF Game Room is True
        NPC_MULTI = [] # Registrat for NPCs
