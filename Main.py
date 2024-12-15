@@ -454,7 +454,6 @@ asyncio.run(main()) ## run program
 ##################################################
 ### Details:
 #####################
-
 # Author:
 #   The name of the main developer or development team.
 # Co-Author:
@@ -487,8 +486,6 @@ asyncio.run(main()) ## run program
 #   The simplest version of the game with the core features that demonstrate its value. This could be a demo or early access version.
 # Pitch:
 #   A short, persuasive summary of why the game is worth investing in, highlighting what makes it unique and appealing.
-
-
 #####################
 ######################################################################################################################################################
 ######################################################################################################################################################
@@ -497,18 +494,10 @@ asyncio.run(main()) ## run program
 #####################
 # Target_audiance:
 #   The demographic and player base the game is intended for (age, interests, gaming habits, etc.).
-
-
 # Recepetion:
 #   How you expect the game to be received by critics and players, including any potential challenges or expectations.
-
-
 # Marketing:
 #   The strategies you plan to use to market the game, such as trailers, social media, influencer partnerships, or events.
-
-
-
-
 #####################
 ######################################################################################################################################################
 ######################################################################################################################################################
@@ -517,17 +506,12 @@ asyncio.run(main()) ## run program
 #####################
 # Strengths:
 #   The key advantages or unique features of your game that set it apart from others (e.g., engaging mechanics, strong art direction, etc.).
-
 # Weaknesses:
 #   Any potential weaknesses or challenges the game might face (e.g., lack of funding, competition, technical limitations).
-
 # Advantages:
 #   The factors that give your game an edge over competitors or position it for success (e.g., innovative gameplay, niche audience).
-
 # Threats:
 #   External factors that might affect the game’s success (e.g., market saturation, other high-profile releases, shifting trends).
-
-
 #####################
 ######################################################################################################################################################
 ######################################################################################################################################################
