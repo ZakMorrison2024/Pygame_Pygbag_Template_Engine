@@ -1,5 +1,9 @@
 ############################################################################################################################################
 ############################################################################################################################################
+##################################################--The Pygame Template Engine--############################################################
+######################################################-- by Zak Morrison --#################################################################
+############################################################################################################################################
+############################################################################################################################################
 # /// script
 # requires-python = ">=3.11"
 # dependencies = [
@@ -95,7 +99,6 @@ class Camera: # Camera Class
         self.target = "" # focus target
         self.setting = 0 # camera control setting
         keys = pygame.key.get_pressed() # check keyboard
-
         # camera control select:
         #setting 1:
         if keys[pygame.K_1] and self.setting != 1: # key no.1
@@ -127,7 +130,6 @@ class Camera: # Camera Class
             self.setting = 6 # cycle_actors(decremental)
         elif keys[pygame.K_6] and self.setting == 6:
             self.setting = 0
-
         # changing setting and view behaviour    
         if self.setting == 0:
            if self.target == actors[0]:
@@ -147,10 +149,8 @@ class Camera: # Camera Class
             self.cycle_actors(j) ## setting 5: decrement living thing 
         if self.setting == 6:
             self.reset() ## setting 6: reset camera to top left
-
    def reset(self):
         return self.rect.move(self.camera.topleft) # Return Camera
-   
    def find_target(self,x,y):
        potential_people = [] # potential people list
        distance = [] # distance measure list
@@ -179,7 +179,6 @@ class Camera: # Camera Class
                 distance.pop(distance[end_scan_former]) # remove larger entries
            if len(distance) == 1: # when length of list is one
                 self.target = distance[0] # make that actor the target  
-
    def freemouse(self): # free mouse look
             if pygame.mouse.get_pressed(3): #middle mouse button
                 button += 1 #increment button
@@ -191,7 +190,6 @@ class Camera: # Camera Class
                     dif_y = ny - my # find y difference
                     self.rect.y + dif_x # move x
                     self.rect.y + dif_y # move y
-
    def freekey(self): # free key
             keys = pygame.key.get_pressed() # assign keys
             if keys[pygame.K_w] or keys[pygame.K_UP]: # if up or W
@@ -206,7 +204,6 @@ class Camera: # Camera Class
             if keys[pygame.K_s] or keys[pygame.K_DOWN]: # if down or S
                  if self.rect.y < room_height and self.rect.y > 0: # if within restriction
                            self.rect.y += 2 # move down
-
    def focus_target(self, target_rect):
         x = -target_rect.centerx + int(self.camera.width / 2) # Move Camera along X axis, following target
         y = -target_rect.centery + int(self.camera.height / 2) # Move Camera along Y axis, following target
@@ -215,14 +212,11 @@ class Camera: # Camera Class
         x = max(-(self.room_width - self.camera.width), x) # Limit Camera along X axis, max
         y = max(-(self.room_height - self.camera.height), y) # Limit Camera along Y axis, max
         self.camera = pygame.Rect(x, y, self.camera.width, self.camera.height)  # Set boundary
-
    def cycle_actors(self,j): # cycle actors
        self.focus_target(actors[j]) # focus target to next increment or decremented actor   
-
    def set_room_size(self, width, height):
         self.room_width = width # Set room width
         self.room_height = height # Set room height
-
 camera = Camera(width,height) # intiate camera, set resolusion to default game resolution
 ##################################################
 ### Room: ROOM_0. defintions: (Room/Level #0)
@@ -406,7 +400,6 @@ class Object_0(pygame.sprite.Sprite): ### Object Template, showing features one 
       # ... etc etc
    def update(self, dt): # Main behaviour loop
      ## Animation/Image_edit:
-     
      self.image = self.img_pre_render
           ## LIFE 
      if self.health <= 0:
@@ -434,7 +427,6 @@ class Object_0(pygame.sprite.Sprite): ### Object Template, showing features one 
                self.current_frame = 0 # reset
      else:
        self.img_pre_render = self.img_death # Set to dead sprite
-
        ## Add more functionality Here:
        ## i.e.....:
        if self.target != 0:
@@ -578,11 +570,8 @@ def handle_client(client_socket, client_address, logs):
    for client_address in logs.keys():
       client_socket.send(key_value_log.encode()) # Send data to other clients
       print("sent to: " + client_address)
-
-   if message.read == int:
-       network_action(int(message))
-       
-
+   if message.read == int: # of int 
+       network_action(int(message)) # action the command
  #####################
 def start_server():
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM) # establish connection
@@ -697,7 +686,6 @@ Play_button = Button_0(0,0,Menu) # Play_button
 Multiplayer_button = Button_1(0,0,Menu) # Multiplayer_button
 Server_button = Button_2(0,0,Menu) # Server_button
 Client_button = Button_3(0,0,Menu) # Client_button
-
 ####################################################################################################
 ####################################################################################################
 #Audio intialisation (PyGBag has some issues with audio, placeholders from a game I made but you get the point!)
