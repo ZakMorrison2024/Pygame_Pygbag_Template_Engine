@@ -17,9 +17,31 @@
 #   "datetime",
 #   "select",
 #   "asyncio",
-#   "time"
+#   "time",
+#   "heapq"
 # ]
 # ///
+#####################################################
+## Authors notes:
+##################################################
+## Features:
+
+# Coder/Business model review system
+# Dynamic Camera/View System
+# Command and talk based M-Network system (Multiplayer)
+# Procedual Room Generation - World builder/background generation? (to implament)
+# Sound/Audio system (to implament)
+# Character customisation (to implament)
+# G.O.A.T NPC AI (to implament)
+# Pathfindinf (to implament)
+# Game UI (to implament)
+# Engine UI and drag and drop (to implament)
+# Asset management (to implament)
+# GPT/ML features? (to implament)
+# 3D engine? (to implament)
+# added peripherials (xbox gamepad) (to impliment)
+# Actors needs (to implemnt)
+
 #####################################################
 ## Libraries:
 ##################################################
@@ -35,6 +57,7 @@ import datetime # date and time
 import time # time
 import select # select
 import asyncio # async
+import heapq #pathing
 ###################################################
 ##################################################
 # GLOBAL VARIABLES:
@@ -64,9 +87,28 @@ Rating_Age = "" # Age rating for game
 ##################################################
 abs_cwd_path_ts = os.path.abspath(os.getcwd()) # absolute working directory string
 width, height = 960, 540 # Default APR: 16:9 1.777, RESO DIMEN: 960 x 540 px (1920 x 1080 % 2), scale resolution by 2.
-FONT = pygame.font.Font(None, 36) # Font
+FONT = pygame.font.Font(None, 36) # Font #1
 splash_trigger = False # trigger for splash screen
 actors = [] # list for all NPCs and Players
+list_of_all_objects = [] # catalog of all active item, objects, actors and entities
+## In-game time:
+day_length = 20
+hour_len = 60
+hours_past = random.random(20)
+date = 0
+year_length = 90
+night_True_day_False = False
+# In-game time mechanism:
+if ROOM == True:
+    if hours_past > day_length:
+        hours_past = 0
+        date += 1
+    if hours_past > 14 and hours_past < 20:
+        night_True_day_False = True
+    else:
+        night_True_day_False = False
+    if date > year_length:
+        date = 0
 ##################################################
 ### GAME NETWORK:
 ##################################################
@@ -99,6 +141,7 @@ class Camera: # Camera Class
         self.target = "" # focus target
         self.setting = 0 # camera control setting
         keys = pygame.key.get_pressed() # check keyboard
+
         # camera control select:
         #setting 1:
         if keys[pygame.K_1] and self.setting != 1: # key no.1
@@ -130,6 +173,22 @@ class Camera: # Camera Class
             self.setting = 6 # cycle_actors(decremental)
         elif keys[pygame.K_6] and self.setting == 6:
             self.setting = 0
+            #setting 7:
+        if keys[pygame.K_7] and self.setting != 7: # key no.7
+            self.setting = 7 # split-screen (to impliment)
+        elif keys[pygame.K_7] and self.setting == 7:
+            self.setting = 0
+             #setting 8:
+        if keys[pygame.K_8] and self.setting != 8: # key no.8
+            self.setting = 8 # 3D camera
+        elif keys[pygame.K_8] and self.setting == 8:
+            self.setting = 0
+              #setting 9:
+        if keys[pygame.K_9] and self.setting != 9: # key no.9
+            self.setting = 9 # splitscreen 3D
+        elif keys[pygame.K_9] and self.setting == 9:
+            self.setting = 0           
+
         # changing setting and view behaviour    
         if self.setting == 0:
            if self.target == actors[0]:
@@ -149,6 +208,7 @@ class Camera: # Camera Class
             self.cycle_actors(j) ## setting 5: decrement living thing 
         if self.setting == 6:
             self.reset() ## setting 6: reset camera to top left
+
    def reset(self):
         return self.rect.move(self.camera.topleft) # Return Camera
    def find_target(self,x,y):
@@ -219,9 +279,14 @@ class Camera: # Camera Class
         self.room_height = height # Set room height
 camera = Camera(width,height) # intiate camera, set resolusion to default game resolution
 ##################################################
-### Room: ROOM_0. defintions: (Room/Level #0)
+### Engine UI
 ##################################################
-def room_0(): # Level_0
+def Engine():
+    pass
+##################################################
+### Room: ROOM_0. defintions: (Room/Level #0) -- (2D)
+##################################################
+def room_0(): # Level_0 (2D)
    width = 1920 # width dimention of level
    height = 1080 # height dimention of level
    max_spawns = 6 # max_number of spawns for NPCs
@@ -240,9 +305,9 @@ def room_0(): # Level_0
       IN_GAME_TIME += dt # increase level timer
    Camera.set_room_size(width,height) # Set room dimensions with Camera
 ##################################################
-### Room: ROOM_1. defintions: (Room/Level #1)
+### Room: ROOM_1. defintions: (Room/Level #1) -- (2D)
 ##################################################
-def room_1(): # Level_1
+def room_1(): # Level_1 (2D)
    width = 1920 # width dimention of level
    height = 1080 # height dimention of level
    max_spawns = 8 # max_number of spawns for NPCs
@@ -261,6 +326,11 @@ def room_1(): # Level_1
       IN_GAME_TIME += dt # increase level timer
    Camera.set_room_size(width,height) # Set room dimensions with Camera
 ##################################################
+### Room: ROOM_2. defintions: (Room/Level #2) -- (3D)
+##################################################
+def room_2(): ## 3D room
+ pass
+##################################################
 ### GAME MECHANICAL:
 ##################################################
 dt = 0 # Delta Time/Step-Up Clock
@@ -272,6 +342,70 @@ room_width = current_room[1] # Change Room Dimension
 room_height = current_room[2] # Change Room Dimension
 temporal_measurements = datetime.datetime.now() # Find Date
 splash_trigger = False # Splash trigger
+##################################################
+### Pathing
+##################################################
+# Globals
+GRID_SIZE = 50
+ROWS, COLS = current_room.room_height // GRID_SIZE, current_room.room_width // GRID_SIZE
+#########################
+class Path():
+ def __init__(self,row,col):
+    self.row = row
+    self.col = col
+    self.x = col * GRID_SIZE
+    self.y = row * GRID_SIZE
+    self.color = WHITE
+    self.g = float('inf')  # Distance from start
+    self.h = 0  # Heuristic to goal
+    self.f = float('inf')  # f = g + h
+    self.parent = None
+    self.walkable = True
+    ##
+ def get_neighbors(self, grid):
+        neighbors = []
+        directions = [(-1, 0), (1, 0), (0, -1), (0, 1)]  # up, down, left, right
+        for dr, dc in directions:
+            new_row, new_col = self.row + dr, self.col + dc
+            if 0 <= new_row < ROWS and 0 <= new_col < COLS:
+                neighbor = grid[new_row][new_col]
+                if neighbor.walkable:
+                    neighbors.append(neighbor)
+        return neighbors
+ ##
+def a_star(start, goal, grid):
+    open_list = []
+    closed_list = set()
+    heapq.heappush(open_list, (start.f, start))
+    start.g = 0
+    start.f = start.g + start.h
+
+    while open_list:
+        current_cell = heapq.heappop(open_list)[1]
+        if current_cell == goal:
+            path = []
+            while current_cell.parent:
+                path.append(current_cell)
+                current_cell = current_cell.parent
+            return path[::-1]  # Return reversed path (start -> goal)
+
+        closed_list.add(current_cell)
+        for neighbor in current_cell.get_neighbors(grid):
+            if neighbor in closed_list:
+                continue
+
+            tentative_g = current_cell.g + 1
+            if tentative_g < neighbor.g:
+                neighbor.parent = current_cell
+                neighbor.g = tentative_g
+                neighbor.h = abs(neighbor.row - goal.row) + abs(neighbor.col - goal.col)
+                neighbor.f = neighbor.g + neighbor.h
+                if all(neighbor != i[1] for i in open_list):
+                    heapq.heappush(open_list, (neighbor.f, neighbor))
+
+    return None  # No path found
+ 
+
 ##################################################
 ## BRANDING:
 ##################################################
@@ -304,6 +438,7 @@ class Button_0(pygame.sprite.Sprite): ### Object Template
    def update(self): # Behaviour loop
       if self.rect.collidepoint(pygame.mouse.get_pos()): # Check collision with mouse
          if interacted == True: # if interacted
+            global MENU, ROOM
             MENU = False # menu finished
             ROOM = True # game room start
             current_rooms = game_levels[0] # game level
@@ -357,6 +492,24 @@ class Button_3(pygame.sprite.Sprite): ### Object Template
 ##################################################
 ### Classes/Objects (in-Game):
 ##################################################
+##################################################
+################### Narrator_AI_Story_driver
+class Narrator(pygame.sprite.Sprite): ### Narrator
+   def __init__(self, x, y, *groups): # Intialisation/defintions
+      super().__init__(*groups) 
+      self.difficulty = random.random(1)
+      self.personality = "Welcoming"
+      self.intelligence = "Low"
+      self.disposition = [] # Actors disposition to those they meet
+   def tasks(self):
+       pass
+   def events(self):
+       pass 
+   def dialog(self):
+       pass
+   def update(self, dt):
+       pass
+##################################################
 ################### Object_0
 class Object_0(pygame.sprite.Sprite): ### Object Template, showing features one can add to object to define the objects nature and interactions (Non-playable Character Ver.)
    def __init__(self, x, y, *groups): # Intialisation/defintions
@@ -370,7 +523,7 @@ class Object_0(pygame.sprite.Sprite): ### Object Template, showing features one 
          abs_cwd_path_ts+os.path.join("/imgs","####-ATTACK_2-####.png")]
      # Death:
       self.image_death = pygame.image.load(abs_cwd_path_ts+os.path.join("/imgs","####-CORPSE-####.png"))
-     ## Image Loading: (init)
+      # Image Loading: (init)
       self.image = self.img_org[0] # Set Default image
       self.img_pre_render = self.img_org[0]
       # Animation Mechanics 
@@ -378,7 +531,7 @@ class Object_0(pygame.sprite.Sprite): ### Object Template, showing features one 
       self.current_frame = 0 ## current frame for animation
       self.animation_time = 0.1 ## threshold for next frame (time)
       self.current_time = 0 ## current timing for animation
-     ## Object Boundaries/Collision:
+      # Object Boundaries/Collision:
       self.rect = self.image.get_rect()# Set Colision Rectangle
       self.rect.x = x # Rect X
       self.rect.y = y # Rect y
@@ -387,18 +540,107 @@ class Object_0(pygame.sprite.Sprite): ### Object Template, showing features one 
       self.moving = False # whether the object is moving
       self.attacking = False # whether the object is attacking
       self.dead = False # whether object is dead
-      # Locals
-      self.target = 0 ## chasing this object or coordinate
-      self.health = 100 # object life
+      self.fleeing = False # flee
+      # Needs:
+      self.hunger = random.random(100) # hunger 
+      self.thirst = random.random(100) # thirsty
+      self.toilet = random.random(100) # toilet need  
+      self.hygiene = random.random(100) # clean
+      self.social = random.random(100) # social need  
+      self.sex = random.random (100) # loneiness
+      self.sleep = random.random(100) # sleepy
+      # Locals:
+      self.task = ""
+      self.hand_left = "Empty" # left hand item
+      self.hand_right = "Empty" # right hand item
+      self.carry_threat_value = 0 # determine how much a threat someone is by what they're holding
+      self.target = 0 # Player target
       self.speed = 3 # object speed
-      self.value = 20 # object value
+      self.value = random.random(2000) # object market value
       self.inventory = [] # object invetory
       self.hostile = False # object temperament
       self.damage = 5 # base damage
       self.debuff = 2 # base draw back
       self.damage_calc = 0 # varaible for calculation
-      # ... etc etc
+      self.mutations = [] # potential mutations
+      # Psychological
+      self.mood = "Sad"
+      self.brain_state = "Healthy"
+      self.mind_activity = "Pondering"
+      self.congition_perdinance = "High"
+      self.emotions = "Low"
+      self.personality = "Welcoming"
+      self.intelligence = "Low"
+      self.disposition = [] # Actors disposition to those they meet
+      # globals
+      self.job_career = "" 
+      self.deposit = "£0" # bank
+      self.friends = [] # social
+      self.address = "Quite close" # address
+      self.transport = "Car - Toyota" # transport
+      # Health
+      self.health = 100 # object life
+      self.head = 100 # head vital
+      self.body = 100 # body vital
+      self.shoulders = 100 # shoulders vital
+      self.chest = 100 # chest vital
+      self.left_arm = 100 # left_arm vital
+      self.right_arm = 100 # right_arm vital
+      self.left_leg = 100 # left_leg vital
+      self.right_leg = 100 # right_leg vital
+      self.right_eye = 100 # right_eye vital  
+      self.left_eye = 100 # left_eye vital
+      self.immunity = 0 # immunity
+      self.Lympathic = 0 # infections
+      self.heart = 100 # heart vital
+      self.brain = 100 # brain vital
+      self.liver = 100 # liver
+      self.kidneys = 100 # kidneys
+      # Pathfinding
+   def pathfinding(self, CELL_SIZE, COLS, ROWS, start, goal):
+       Path(current_room.room_width// CELL_SIZE,current_room.room_height // CELL_SIZE)
+       self.grid = [[Path(row, col) for col in range(COLS)] for row in range(ROWS)]
+       self.start = start
+       self.goal = goal
+       self.path = a_star(self.start,self.goal,self.grid)
+       self.obstacles = []
+       ##
+   def destination(self,tx,ty,grid):    
+       col, row = tx // GRID_SIZE, ty // GRID_SIZE
+       self.cell = grid[row][col]
+       Path.get_neighbors(self.cell)
+   
+   def GOAT(self):
+       self.objective = ""
+
+
+       character_clock = 0
+       character_clock += 1
+       if character_clock > len(list_of_all_objects):
+           character_clock = 0
+       if list_of_all_objects[character_clock] == self.objective:
+           self.pathfinding(50,current_room.room_width// 50,current_room.room_width// 50,a_star.current_cell,self.objective)
+           
+
+
+       ##
    def update(self, dt): # Main behaviour loop
+     ## Drains/needs:
+     if dt % 2:
+        self.hunger -= random.random(1)
+        self.thirst -= random.random(1)
+        self.toilet += random.random(2)
+        self.hygiene -= random.random(2) # clean
+        self.social -= random.random(0.5) # social need  
+        self.sex -= random.random (0.3) # loneiness
+        self.sleep -= random.random(2)
+     if night_True_day_False == True:
+        self.sleep -= random.random(6)
+
+
+
+
+        self.sleep -= random.random(1) # sleepy
      ## Animation/Image_edit:
      self.image = self.img_pre_render
           ## LIFE 
@@ -458,25 +700,69 @@ class Object_1(pygame.sprite.Sprite): ### Object Template, showing features one 
       self.current_frame = 0 ## current frame for animation
       self.animation_time = 0.1 ## threshold for next frame (time)
       self.current_time = 0 ## current timing for animation
-      ## Object Boundaries/Collision:
+      # Object Boundaries/Collision:
       self.rect = self.image.get_rect()# Set Colision Rectangle
       self.rect.x = x # Rect X
-      self.rect.y = y # Rect y
+      self.rect.y = y # Rect Y
       # States:
       self.alert = False # whether the object is alerted
       self.moving = False # whether the object is moving
       self.attacking = False # whether the object is attacking
       self.dead = False # whether object is dead
-      # Locals
+      self.fleeing = False # flee
+      # Needs:
+      self.hunger = random.random(100) # hunger 
+      self.thirst = random.random(100) # thirsty
+      self.toilet = random.random(100) # toilet need  
+      self.hygiene = random.random(100) # clean
+      self.social = random.random(100) # social need  
+      self.sex = random.random (100) # loneiness
+      # Locals:
+      self.task = ""
+      self.hand_left = "Empty" # left hand item
+      self.hand_right = "Empty" # right hand item
+      self.carry_threat_value = 0 # determine how much a threat someone is by what they're holding
       self.target = 0 # Player target
-      self.health = 100 # object life
       self.speed = 3 # object speed
-      self.value = 20 # object value
+      self.value = random.random(2000) # object market value
       self.inventory = [] # object invetory
       self.hostile = False # object temperament
       self.damage = 5 # base damage
       self.debuff = 2 # base draw back
       self.damage_calc = 0 # varaible for calculation
+      self.mutations = [] # potential mutations
+      # Psychological
+      self.mood = "Sad"
+      self.brain_state = "Healthy"
+      self.mind_activity = "Pondering"
+      self.congition_perdinance = "High"
+      self.emotions = "Low"
+      self.personality = "Welcoming"
+      self.intelligence = "Low"
+      # globals
+      self.job_career = "" 
+      self.deposit = "£0" # bank
+      self.friends = [] # social
+      self.address = "Quite close" # address
+      self.transport = "Car - Toyota" # transport
+      # Health
+      self.health = 100 # object life
+      self.head = 100 # head vital
+      self.body = 100 # body vital
+      self.shoulders = 100 # shoulders vital
+      self.chest = 100 # chest vital
+      self.left_arm = 100 # left_arm vital
+      self.right_arm = 100 # right_arm vital
+      self.left_leg = 100 # left_leg vital
+      self.right_leg = 100 # right_leg vital
+      self.right_eye = 100 # right_eye vital  
+      self.left_eye = 100 # left_eye vital
+      self.immunity = 0 # immunity
+      self.Lympathic = 0 # infections
+      self.heart = 100 # heart vital
+      self.brain = 100 # brain vital
+      self.liver = 100 # liver
+      self.kidneys = 100 # kidneys
       # ... etc etc
    def update(self, dt): # Main behaviour loop
         ## Animation/Image_edit:
