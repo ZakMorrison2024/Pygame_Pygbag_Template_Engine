@@ -8,7 +8,7 @@ def handle_client(client_socket, client_address, client_choices):
         # Receive choice from the client
         choice = client_socket.recv(1024).decode()
         print(f"Player {client_address} chose {choice}")
-        client_choices[client_address] = choice
+        #client_choices[client_address] = choice
 
         if len(client_choices) == 2:
             # Determine the result after both players have made their choice
