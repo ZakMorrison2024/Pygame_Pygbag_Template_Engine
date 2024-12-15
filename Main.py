@@ -386,6 +386,9 @@ async def main():
       #      fingers.pop(event.finger_id, None)  
 
 
+##################################################
+   ##################################################
+      ##################################################
     ## Scene Hyirachy:
     if SPLASH == True:
         screen.blit(Sphinixx,(0,0)) # Small image for publicity 
@@ -401,9 +404,16 @@ async def main():
       NPC_MULTI.draw(screen) # Draw multiple enemies
       # ...
        pass # Main game room
+      ##################################################
+   ##################################################
+##################################################
 
-
+##################################################
+##################################################
+##################################################
     ## Final Render/Utility/Debug
+##################################################
+
     dt = clock.tick(60)/1000 # Delta Time counting up from tik
     print(dt)
     pygame.display.flip() # Display render for PyGBag
