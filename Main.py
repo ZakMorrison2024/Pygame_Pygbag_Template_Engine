@@ -76,6 +76,7 @@ My_IP = socket.gethostbyname(hostname)
 PORT = 8080
 Server = False
 Client = False
+max_clients = 8
 online_host_address = ""
 online_host_port = ""
 ##################################################
@@ -370,10 +371,25 @@ running = True
    ##################################################
    # Server:
    ##################################################
-def handle_client(client_socket, client_address, client_message):
+def check_client_timeout(client_socket):
+       try:
+        # Send a small packet of data to check if the socket is still open
+         for client in log.keys():
+          client_socket.send(b"PING")
+        return True
+    except socket.error:
+         client_socket.close()
+        return False
+
+def start_client_timer(dt,duration, clinet_socket):
+   if dt > duration:
+      check_client_timeout(client_socket)
+
+def handle_client(client_socket, client_address, client_message, dt):
    message = client_socket.recv(1024).decode()
+   client[client_address].start_client_timer(dt+120, client_socket)
    print(f"Player {client_address} said: {message}")
-   log[client_address] = message
+   log[client_address].append(message)
    tot_log = len(list(log.keys()))
    if tot_log > 0:
       key_value_log = log[list(log.keys())[tot_log]] 
@@ -393,14 +409,15 @@ def handle_client(client_socket, client_address, client_message):
 def start_server():
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server.bind((My_IP, PORT))
-    server.listen(2)
-    print("Server listening on port" +str(PORT))
+    server.listen(max_clients)
+    print("Server listening on port: " +str(PORT))
 
       log = {}
 
     while True:
         client_socket, client_address = server.accept()
         print(f"Player connected from {client_address}")
+        client_socket.setblocking(0)
         threading.Thread(target=handle_client, args=(client_socket, client_address, client_message)).start()
         pass
 #####################
@@ -411,11 +428,23 @@ def send_message(message):
     try:
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
             s.connect((online_host_address, online_host_port))
-            s.send(message.encode())
+            if s:
+               readable, writable, errored = select.select([], [s], [], 0)
+               if writable:
+               s.send(message.encode())
+               recv_message = s.recv(1024).decode()
+               return recv_message
+       except Exception as e:
+         return "Error: Unable to connect to server."
+ #####################
+def recv_message(message):
+    try:
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            readable, writable, errored = select.select([s], [], [], 0)
+            if readable:
             recv_message = s.recv(1024).decode()
-            return message
-    except Exception as e:
-        return "Error: Unable to connect to server."
+            return see_message(recv_message)
+
  #####################
    ##################################################
    # Client and Server:
@@ -435,7 +464,7 @@ def multiplayer():
    if Server == True:
       start_server()
       print(My_IP)
-
+     #####################
 ##################################################
 ####################################################################################################
 ####################################################################################################
