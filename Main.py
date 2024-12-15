@@ -27,7 +27,7 @@ import threading # Multi-threading
 import datetime # date and time
 ###################################################
 ##################################################
-#Pre-defintions: (remove if unwanted, added for consideration.)
+# GLOBAL VARIABLES:
 ###################################################
 # Colours: (RGB)
 ##################################################
@@ -37,13 +37,6 @@ GREEN = (0, 255, 0) # Green
 RED = (255, 0, 0) # Red
 YELLOW = (255,255,0) # Yellow
 BLUE = (0,0,255) # Blue
-##################################################
-# GAME:
-##################################################
-abs_cwd_path_ts = os.path.abspath(os.getcwd()) # absolute working directory string
-width, height = 960, 540 # Default APR: 16:9 1.777, RESO DIMEN: 960 x 540 px (1920 x 1080 % 2), scale resolution by 2.
-##################################################
-# GLOBAL VARIABLES:
 ##################################################
 ### GAME DESCRIPTIVE:
 ##################################################
@@ -56,6 +49,11 @@ Decription = "" # Info on Game
 Date_of_Release = "--/--/----" # Release date of game
 Contact = [] # Contact details
 Rating_Age = "" # Age rating for game
+##################################################
+# GAME:
+##################################################
+abs_cwd_path_ts = os.path.abspath(os.getcwd()) # absolute working directory string
+width, height = 960, 540 # Default APR: 16:9 1.777, RESO DIMEN: 960 x 540 px (1920 x 1080 % 2), scale resolution by 2.
 ##################################################
 ### GAME NETWORK:
 ##################################################
