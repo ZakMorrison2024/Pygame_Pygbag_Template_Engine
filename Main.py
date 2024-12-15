@@ -349,8 +349,8 @@ Enemy = pygame.sprite.Group()
 # Branding Objects:
 Company_branding = splash(0,0,Splash)
 # Game Objects:
-NPC = Object_0(rand_random(room_ROOM_width),rand_random(room_ROOM_width),Enemy) # Spawns ONE enemy at random location
-Player = Object_1(10,10,Player) # Spawns player at x:10, y:10 
+obj_NPC = Object_0(rand_random(room_ROOM_width),rand_random(room_ROOM_width),Enemy) # Spawns ONE enemy at random location
+obj_Player = Object_1(10,10,Player) # Spawns player at x:10, y:10 
 # Multi-Spawner
 i ++
 if i < Max_Entities:
