@@ -1,4 +1,4 @@
-# please note this isn't finished, has bugs and ineffiencies
+# Please note: this isn't finished, has bugs and ineffiencies!
 -
 -
 # PyGBag_PyGame_Template
