@@ -112,18 +112,17 @@ camera = Camera(width,height) # intiate camera, set resolusion to default game r
 def room_0(): # Level_0
    width = 1920 # width dimention of level
    height = 1080 # height dimention of level
-   spawn_location_player = [] # location of player spawn
    max_spawns = 6 # max_number of spawns for NPCs
    enemy_spawn_local_width = width/max_spawns # even of spawns for NPCs
    enemy_spawn_local_height = height/max_spawns # even of spawns for NPCs
    no_of_spawn_points = 1 # spawns tally for NPCs
-   for no_of_spawn_point < max_spawns:
-      spawn_points_enemies[no_of_spawn_points] = [enemy_spawn_local_width*no_of_spawn_points,enemy_spawn_local_height*no_of_spawn_points] # Find locations of spawns for NPCs
-      no_of_spawn_points += 1 # tally up
    Current_Entities = 0 # Entities on screen/in map
    Max_Entities = 50 # Max Entities on map
    Total_Entities = 100 # Total Level Entities
    Entities_difficulty = 0.10 # Enemy difficulty multiplier
+   for no_of_spawn_point < max_spawns:
+      spawn_points_enemies[no_of_spawn_points] = [enemy_spawn_local_width*no_of_spawn_points,enemy_spawn_local_height*no_of_spawn_points] # Find locations of spawns for NPCs
+      no_of_spawn_points += 1 # tally up
    if current_room == game_levels[0]:
       IN_GAME_TIME += dt # increase level timer
    Camera.set_room_size(width,height) # Set room dimensions with Camera
@@ -133,18 +132,17 @@ def room_0(): # Level_0
 def room_1(): # Level_1
    width = 1920 # width dimention of level
    height = 1080 # height dimention of level
-   spawn_location_player = [] # location of player spawn
    max_spawns = 8 # max_number of spawns for NPCs
    enemy_spawn_local_width = width/max_spawns # even of spawns for NPCs
    enemy_spawn_local_height = height/max_spawns # even of spawns for NPCs
    no_of_spawn_points = 1 # spawns tally for NPCs
-   for no_of_spawn_point < max_spawns:
-      spawn_points_enemies[no_of_spawn_points] = [enemy_spawn_local_width*no_of_spawn_points,enemy_spawn_local_height*no_of_spawn_points] # Find locations of spawns for NPCs
-      no_of_spawn_points += 1 # tally up
    Current_Entities = 0 # Entities on screen/in map
    Max_Entities = 75 # Max Entities on map
    Total_Entities = 120 # Total Level Entities
    Entities_difficulty = 0.15 # Enemy difficulty multiplier
+   for no_of_spawn_point < max_spawns:
+      spawn_points_enemies[no_of_spawn_points] = [enemy_spawn_local_width*no_of_spawn_points,enemy_spawn_local_height*no_of_spawn_points] # Find locations of spawns for NPCs
+      no_of_spawn_points += 1 # tally up
    if current_room == game_levels[1]:
       IN_GAME_TIME += dt # increase level timer
    Camera.set_room_size(width,height) # Set room dimensions with Camera
