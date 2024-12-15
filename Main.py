@@ -203,6 +203,9 @@ class Object_0(pygame.sprite.Sprite): ### Object Template, showing features one 
   
   pass
 
+##################################################
+##################################################
+##################################################
 
 class Object_1(pygame.sprite.Sprite): ### Object Template, showing features one can add to object to define the objects nature and interactions (playable Character Ver.)
    def __init__(self, x, y, *groups): # Intialisation/defintions
@@ -314,7 +317,9 @@ class Object_1(pygame.sprite.Sprite): ### Object Template, showing features one 
   
   pass
 
-
+##################################################
+##################################################
+##################################################
 
 
 #
