@@ -625,8 +625,7 @@ Play_button = Button_0(0,0,Menu) # Play_button
 Multiplayer_button = Button_1(0,0,Menu) # Multiplayer_button
 Server_button = Button_2(0,0,Menu) # Server_button
 Client_button = Button_3(0,0,Menu) # Client_button
-# Game Objects:
-obj_Player = Object_1(0,0,Player_control) # Player_object
+
 ####################################################################################################
 ####################################################################################################
 #Audio intialisation (PyGBag has some issues with audio, placeholders from a game I made but you get the point!)
@@ -708,6 +707,7 @@ async def main(): # Start of game loop
        Menu.draw(screen) # Draw splash
        pass # Menu to select features
     if ROOM == True: # IF Game Room is True
+       obj_Player = Object_1(0,0,Player_control) # Player_object
        NPC_MULTI = [] # Registrat for NPCs
        if current_room == game_levels[0]: # if level one
            for Current_Entities < Max_Entities and i < Total_Entities: # if there currently less NPC in view and less than the total in the map
