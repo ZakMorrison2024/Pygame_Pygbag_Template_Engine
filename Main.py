@@ -86,8 +86,8 @@ ROOM = False # Room Placeholder
 class Camera:
    def __init__(self, width, height):
         self.camera = pygame.Rect(0, 0, width, height)
-        self.world_width = 0
-        self.world_height = 0
+        self.room_width = 0
+        self.room_height = 0
     def apply(self, entity):
         return entity.rect.move(self.camera.topleft)
    def update(self, target_rect):
@@ -95,12 +95,14 @@ class Camera:
         y = -target_rect.centery + int(self.camera.height / 2)
         x = min(0, x)
         y = min(0, y)
-        x = max(-(self.world_width - self.camera.width), x)
-        y = max(-(self.world_height - self.camera.height), y)
+        x = max(-(self.room_width - self.camera.width), x)
+        y = max(-(self.room_height - self.camera.height), y)
         self.camera = pygame.Rect(x, y, self.camera.width, self.camera.height)
-   def set_world_size(self, width, height):
-        self.world_width = width
-        self.world_height = height
+   def set_room_size(self, width, height):
+        self.room_width = width
+        self.room_height = height
+
+camera = Camera(width,height)
 ##################################################
 ### Room: ROOM_0. defintions: (Room #0)
 ##################################################
@@ -109,6 +111,7 @@ def room_0():
    height = 1080
    Max_Entities = 50
    IN_GAME_TIME = "00:00"
+   Camera.set_room_size(width,height)
 ##################################################
 ### Room: ROOM_1. defintions: (Room #1)
 ##################################################
@@ -117,6 +120,7 @@ def room_1():
    height = 1080
    Max_Entities = 20
    IN_GAME_TIME = "00:00"
+   Camera.set_room_size(width,height)
 ##################################################
 ### GAME MECHANICAL:
 ##################################################
