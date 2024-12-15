@@ -373,7 +373,7 @@ def handle_client(client_socket, client_address, client_message):
    log[client_address] = message
    tot_log = len(list(log.keys()))
    if tot_log > 0:
-      key_value_log = log[list(log.keys())[tot_log-1]] 
+      key_value_log = log[list(log.keys())[tot_log]] 
    else:
       key_value_log = log[list(log.keys())[0]] 
    
@@ -393,18 +393,36 @@ def start_server():
     server.listen(2)
     print("Server listening on port" +str(PORT))
 
-    client_choices = {}
+      log = {}
 
     while True:
         client_socket, client_address = server.accept()
         print(f"Player connected from {client_address}")
-        threading.Thread(target=handle_client, args=(client_socket, client_address, client_choices)).start()
+        threading.Thread(target=handle_client, args=(client_socket, client_address, client_message)).start()
+        pass
 
-   
    ##################################################
    # Client:
    ##################################################
 
+def send_message(message):
+    try:
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            s.connect((online_host_address, online_host_port))
+            s.send(message.encode())
+            recv_message = s.recv(1024).decode()
+            return message
+    except Exception as e:
+        return "Error: Unable to connect to server."
+ #####################
+   ##################################################
+   # Client and Server:
+   ##################################################
+
+def see_message(message):
+   if message:
+            result_text = FONT.render(message, True, RED)
+      #####################
 ##################################################
 ####################################################################################################
 ####################################################################################################
