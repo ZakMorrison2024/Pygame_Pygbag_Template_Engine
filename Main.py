@@ -414,6 +414,7 @@ async def main():
     ## Scene Hyirachy:
     if SPLASH == True:
         screen.blit(Sphinixx,(0,0)) # Small image for publicity 
+        Splash.draw(screen)
       pass # Splash screen for Branding
     if MENU == True:
        pass # Menu to select features
@@ -421,9 +422,8 @@ async def main():
       screen.blit(NPC) # Render NPC
       screen.blit(Player) # Render Player
       screen.blit(NPC_MULTI) # Render Multi-spawned NPCs
-      NPC.draw(screen) # Draw Enemy
+      Enemy.draw(screen) # Draw Enemy
       Player.draw(screen) # Draw Player
-      NPC_MULTI.draw(screen) # Draw multiple enemies
       # ...
        pass # Main game room
       ##################################################
