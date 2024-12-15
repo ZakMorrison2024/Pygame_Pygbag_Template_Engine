@@ -294,13 +294,15 @@ class Object_0(pygame.sprite.Sprite): ### Object Template, showing features one 
       self.debuff = 2 # base draw back
       self.damage_calc = 0 # varaible for calculation
       # ... etc etc
-  def attack(self):
+
+  def attack(self,target):
          if self.target != 0:
             if self.attacking == True:
                  if self.current_frame = 3: # Placeholder number, edit for your needs.
                       self.debuff = self.debuff + (self.debuff*self.target.damage) # increase debuff by targets attack
                       self.damage_calc = self.damage/self.debuff # work out how much damage will be dealth during attack
                       self.target.life -= self.damage_calc # deal said damage
+                    
   def rotate(self):
       # Make instance rotate around point (define point by px,py)
       px,py = self.target.x,self.target.y # center point of rotation
@@ -309,7 +311,7 @@ class Object_0(pygame.sprite.Sprite): ### Object Template, showing features one 
       self.image = pygame.transform.rotate(self.image_clean,angle) # rotate image
       self.rect = self.image.get_rect(center=self.rect.center) # set new boundary/collision_box
 
- def animation(self):
+ def animation(self,dt):
          if self.current_frame >= self.max_frame: # Animation Frame loop
           self.current_frame = 0 # reset current frame
          if self.moving == True or self.attacking == True: # Animation Trigger
@@ -325,7 +327,7 @@ class Object_0(pygame.sprite.Sprite): ### Object Template, showing features one 
                self.current_time = 0 # reset
                self.current_frame = 0 # reset
 
- def kill(self)
+ def kill(self):
      ## LIFE 
      if self.health <= 0:
            self.death = True
@@ -337,7 +339,7 @@ def update(self, dt): # Main behaviour loop
      if self.death == False: # Check if Alive/Active
         rotate()     
         animation()
-        attack()
+        attack(target)
      else:
        self.img_pre_render = self.img_death # Set to dead sprite
 
@@ -351,7 +353,12 @@ def update(self, dt): # Main behaviour loop
 ################### Object_1
 class Object_1(pygame.sprite.Sprite): ### Object Template, showing features one can add to object to define the objects nature and interactions (playable Character Ver.)
    def __init__(self, x, y, *groups): # Intialisation/defintions
-      super().__init__(*groups) 
+      super().__init__(*groups)
+      properities()
+      sprite()
+      definitives()
+      
+   def sprite(self): 
       ## Primary image placeholder:
       self.img_org =[pygame.image.load(abs_cwd_path_ts+os.path.join("/imgs","####-INSERT_NAME_HERE-####.png"))),    
          abs_cwd_path_ts+os.path.join("/imgs","####-INSERT_NAME_HERE_2-####.png")))] # - List Placeholder for second (or more) images for animation # All With Pre-Defined PATH Variable
@@ -360,23 +367,29 @@ class Object_1(pygame.sprite.Sprite): ### Object Template, showing features one 
          abs_cwd_path_ts+os.path.join("/imgs","####-ATTACK_1-####.png"))),
          abs_cwd_path_ts+os.path.join("/imgs","####-ATTACK_2-####.png")))]
       self.image_death = pygame.image.load(abs_cwd_path_ts+os.path.join("/imgs","####-CORPSE-####.png")))
-     ## Image Loading: (init)
+      ## Image Loading: (init)
       self.image = self.img_org[0] # Set Default image
       self.img_pre_render = 0
-     ## Object Boundaries/Collision:
-      self.rect = self.image.get_rect()# Set Colision Rectangle
-      self.rect.x = x # Rect X
-      self.rect.y = y # Rect y
-      # States:
-      self.alert = False # whether the object is alerted
-      self.moving = False # whether the object is moving
-      self.attacking = False # whether the object is attacking
-      self.dead = False # whether object is dead
       # Animation Mechanics 
       self.max_frames = len(self.img_pre_render)
       self.current_frame = 0 ## current frame for animation
       self.animation_time = 0.1 ## threshold for next frame (time)
       self.current_time = 0 ## current timing for animation
+
+   def properities(self): 
+     ## Object Boundaries/Collision:
+      self.rect = self.image.get_rect()# Set Colision Rectangle
+      self.rect.x = x # Rect X
+      self.rect.y = y # Rect y
+      
+   def states(self):   
+      # States:
+      self.alert = False # whether the object is alerted
+      self.moving = False # whether the object is moving
+      self.attacking = False # whether the object is attacking
+      self.dead = False # whether object is dead
+      
+   def definitives(self):
       # Locals
       self.health = 100 # object life
       self.speed = 3 # object speed
@@ -387,33 +400,31 @@ class Object_1(pygame.sprite.Sprite): ### Object Template, showing features one 
       self.debuff = 2 # base draw back
       self.damage_calc = 0 # varaible for calculation
       # ... etc etc
-   def update(self, dt): # Main behaviour loop
-         ## Animation/Image_edit:
-         self.image = self.img_pre_render # load pre-rendered sprite
-         ## LIFE 
-         if self.health <= 0:
-              self.death = True ### dead!
-        if self.death == False: # Check if Alive/Active
-            keys = pygame.key.get_pressed()
-            if keys[pygame.K_w] or keys[pygame.K_UP]:
-                 if player.rect.y < room_height and player.rect.y > 0:
-                           self.rect.y -= 2 # move up
-           elif keys[pygame.K_d] or keys[pygame.K_RIGHT]:
-                 if player.rect.x < room_width and player.rect.x > 0:
-                           self.rect.x += 2 # move right
-           elif keys[pygame.K_a] or keys[pygame.K_LEFT]:
-                 if player.rect.x < room_width and player.rect.x > 0
-                           self.rect.x -= 2 # move left
-           elif keys[pygame.K_s] or keys[pygame.K_DOWN]:
-                 if player.rect.y < room_height and player.rect.y > 0:
-                           self.rect.y += 2 # move down
+
+   def kill(self):
+      ## LIFE 
+      if self.health <= 0:
+         self.death = True ### dead!
+
+   def rotate(self):
          # Make instance rotate around point (define point by px,py)
            mx,my = = pygame.mouse.get_pos() # center point of mouse (assuming this game is a top-down or requires the player to face the mouse)
            rel_x, rel_y = round(mx - self.rect.x), round(my - self.rect.y) # find difference between mouse and rect coordinates
            angle = round((180/math.pi)*+math.atan2(rel_x,rel_y)) # Trignometery for rotation
            self.image = pygame.transform.rotate(self.image_clean,angle) # rotate image
            self.rect = self.image.get_rect(center=self.rect.center) # set new boundary
-           if self.current_frame >= self.max_frame: # Animation Frame loop
+
+   def attack(self,target):
+             if self.target != 0:
+            if self.attacking == True:
+                 if self.current_frame = 3: # Placeholder number, edit for your needs.
+                      self.debuff = self.debuff + (self.debuff*self.target.damage) # increase debuff by targets attack
+                      self.damage_calc = self.damage/self.debuff # work out how much damage will be dealth during attack
+                      self.target.life -= self.damage_calc # deal said damage
+
+
+   def animation(self,dt):
+                 if self.current_frame >= self.max_frame: # Animation Frame loop
                 self.current_frame = 0 # reset current frame
            if self.moving == True or self.attacking == True: # Animation Trigger
                if self.moving == True :
@@ -427,16 +438,36 @@ class Object_1(pygame.sprite.Sprite): ### Object Template, showing features one 
            else:
                self.current_time = 0 # reset
                self.current_frame = 0 # reset
+
+   def key_controls(self):
+           keys = pygame.key.get_pressed()
+            if keys[pygame.K_w] or keys[pygame.K_UP]:
+                 if player.rect.y < room_height and player.rect.y > 0:
+                           self.rect.y -= 2 # move up
+           elif keys[pygame.K_d] or keys[pygame.K_RIGHT]:
+                 if player.rect.x < room_width and player.rect.x > 0:
+                           self.rect.x += 2 # move right
+           elif keys[pygame.K_a] or keys[pygame.K_LEFT]:
+                 if player.rect.x < room_width and player.rect.x > 0
+                           self.rect.x -= 2 # move left
+           elif keys[pygame.K_s] or keys[pygame.K_DOWN]:
+                 if player.rect.y < room_height and player.rect.y > 0:
+                           self.rect.y += 2 # move down
+      
+   def update(self, dt): # Main behaviour loop
+         ## Animation/Image_edit:
+        self.image = self.img_pre_render # load pre-rendered sprite
+        kill()  
+        if self.death == False: # Check if Alive/Active
+        key_controls()
+        rotate()     
+        animation()
+        attack(target)
         else:
                self.img_pre_render = self.img_death # Set to dead sprite
        ## Add more functionality Here:
        ## i.e..........:
-       if self.target != 0:
-            if self.attacking == True:
-                 if self.current_frame = 3: # Placeholder number, edit for your needs.
-                      self.debuff = self.debuff + (self.debuff*self.target.damage) # increase debuff by targets attack
-                      self.damage_calc = self.damage/self.debuff # work out how much damage will be dealth during attack
-                      self.target.life -= self.damage_calc # deal said damage
+
         pass
 ##################################################
 ##################################################
@@ -614,7 +645,7 @@ obj_Player = Object_1(0,0,Player_control) # Player_object
 ####################################################################################################
 ####################################################################################################
 ## For device touch mechaninics:
-#fingers = [] # Touch Register
+fingers = [] # Touch Register
 ##################################################
 # Primary Game Loop:
 ##################################################
