@@ -63,6 +63,12 @@ Rating_Age = ""
 ### GAME MECHANICAL:
 ##################################################
 dt = 0 # Delta Time/Step-Up Clock
+PAUSE = False
+
+Multiplayer = False
+My_IP = ""
+Server = False
+Client = False
 ##################################################
 ### GAME SCENES/ROOMS:
 ##################################################
