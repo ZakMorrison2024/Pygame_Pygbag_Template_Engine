@@ -191,11 +191,11 @@ class Button_0(pygame.sprite.Sprite): ### Object Template, showing features one 
       self.rect.y = y # Rect Y
    def update(self): # Behaviour loop
       if self.rect.collidepoint(pygame.mouse.get_pos()): # Check collision with mouse
-         if interacted == True:
-            MENU = False
-            ROOM = True
-            current_rooms = game_level[0]
-            self.kill()
+         if interacted == True: # if interacted
+            MENU = False # menu finished
+            ROOM = True # game room start
+            current_rooms = game_level[0] # game level
+            self.kill() # destory button
 ###########################################################################################################################################
 ##################################################
 ### Classes/Objects (in-Game):
