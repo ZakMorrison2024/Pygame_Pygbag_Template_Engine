@@ -245,6 +245,11 @@ class Button_3(pygame.sprite.Sprite): ### Object Template
 class Object_0(pygame.sprite.Sprite): ### Object Template, showing features one can add to object to define the objects nature and interactions (Non-playable Character Ver.)
    def __init__(self, x, y, *groups): # Intialisation/defintions
       super().__init__(*groups) 
+      properities()
+      sprite()
+      definitives()
+
+   def sprite(self):   
       ## Primary image placeholder:
       self.img_org =[pygame.image.load(abs_cwd_path_ts+os.path.join("/imgs","####-INSERT_NAME_HERE-####.png"))),    
          abs_cwd_path_ts+os.path.join("/imgs","####-INSERT_NAME_HERE_2-####.png")))] # - List Placeholder for second (or more) images for animation # All With Pre-Defined PATH Variable
@@ -257,20 +262,27 @@ class Object_0(pygame.sprite.Sprite): ### Object Template, showing features one 
      ## Image Loading: (init)
       self.image = self.img_org[0] # Set Default image
       self.img_pre_render = self.img_org[0]
-     ## Object Boundaries/Collision:
-      self.rect = self.image.get_rect()# Set Colision Rectangle
-      self.rect.x = x # Rect X
-      self.rect.y = y # Rect y
-      # States:
-      self.alert = False # whether the object is alerted
-      self.moving = False # whether the object is moving
-      self.attacking = False # whether the object is attacking
-      self.dead = False # whether object is dead
+
       # Animation Mechanics 
       self.max_frames = len(self.img_pre_render)
       self.current_frame = 0 ## current frame for animation
       self.animation_time = 0.1 ## threshold for next frame (time)
       self.current_time = 0 ## current timing for animation
+   
+   def properities(self):  
+     ## Object Boundaries/Collision:
+      self.rect = self.image.get_rect()# Set Colision Rectangle
+      self.rect.x = x # Rect X
+      self.rect.y = y # Rect y
+      
+   def states(self):    
+      # States:
+      self.alert = False # whether the object is alerted
+      self.moving = False # whether the object is moving
+      self.attacking = False # whether the object is attacking
+      self.dead = False # whether object is dead
+     
+  def definitives(self):
       # Locals
       self.target = 0 ## chasing this object or coordinate
       self.health = 100 # object life
@@ -282,20 +294,23 @@ class Object_0(pygame.sprite.Sprite): ### Object Template, showing features one 
       self.debuff = 2 # base draw back
       self.damage_calc = 0 # varaible for calculation
       # ... etc etc
-   def update(self, dt): # Main behaviour loop
-     ## Animation/Image_edit:
-     self.image = self.img_pre_render
-     ## LIFE 
-     if self.health <= 0:
-           self.death = True
-     if self.death == False: # Check if Alive/Active
+  def attack(self):
+         if self.target != 0:
+            if self.attacking == True:
+                 if self.current_frame = 3: # Placeholder number, edit for your needs.
+                      self.debuff = self.debuff + (self.debuff*self.target.damage) # increase debuff by targets attack
+                      self.damage_calc = self.damage/self.debuff # work out how much damage will be dealth during attack
+                      self.target.life -= self.damage_calc # deal said damage
+  def rotate(self):
       # Make instance rotate around point (define point by px,py)
       px,py = self.target.x,self.target.y # center point of rotation
       rel_x, rel_y = round(px - self.rect.x), round(py - self.rect.y) # find difference between target and rect coordinates
       angle = round((180/math.pi)*+math.atan2(rel_x,rel_y)) # Trignometery for rotation
       self.image = pygame.transform.rotate(self.image_clean,angle) # rotate image
       self.rect = self.image.get_rect(center=self.rect.center) # set new boundary/collision_box
-      if self.current_frame >= self.max_frame: # Animation Frame loop
+
+ def animation(self):
+         if self.current_frame >= self.max_frame: # Animation Frame loop
           self.current_frame = 0 # reset current frame
          if self.moving == True or self.attacking == True: # Animation Trigger
             if self.moving == True :
@@ -309,17 +324,26 @@ class Object_0(pygame.sprite.Sprite): ### Object Template, showing features one 
             else:
                self.current_time = 0 # reset
                self.current_frame = 0 # reset
-       else:
-             self.img_pre_render = self.img_death # Set to dead sprite
+
+ def kill(self)
+     ## LIFE 
+     if self.health <= 0:
+           self.death = True
+
+def update(self, dt): # Main behaviour loop
+     ## Animation/Image_edit:
+     self.image = self.img_pre_render
+     kill()  
+     if self.death == False: # Check if Alive/Active
+        rotate()     
+        animation()
+        attack()
+     else:
+       self.img_pre_render = self.img_death # Set to dead sprite
 
        ## Add more functionality Here:
        ## i.e.....:
-       if self.target != 0:
-            if self.attacking == True:
-                 if self.current_frame = 3: # Placeholder number, edit for your needs.
-                      self.debuff = self.debuff + (self.debuff*self.target.damage) # increase debuff by targets attack
-                      self.damage_calc = self.damage/self.debuff # work out how much damage will be dealth during attack
-                      self.target.life -= self.damage_calc # deal said damage
+    
       pass
 ##################################################
 ##################################################
