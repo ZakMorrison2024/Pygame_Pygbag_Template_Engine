@@ -33,7 +33,7 @@
 # Sound/Audio system (to implament)
 # Character customisation (to implament)
 # G.O.A.T NPC AI (to implament)
-# Pathfindinf (to implament)
+# Basic Pathfinding (to implament)
 # Game UI (to implament)
 # Engine UI and drag and drop (to implament)
 # Asset management (to implament)
@@ -41,6 +41,8 @@
 # 3D engine? (to implament)
 # added peripherials (xbox gamepad) (to impliment)
 # Actors needs (to implemnt)
+
+# Sophisticated Debug System! 
 
 #####################################################
 ## Libraries:
@@ -58,7 +60,28 @@ import time # time
 import select # select
 import asyncio # async
 import heapq #pathing
-###################################################
+##################################################
+##################################################
+#Debug System
+#######################################
+DEBUG_MODE = False
+
+keys = pygame.key.get_pressed()
+
+if keys[pygame.K_LCTRL]:
+    DEBUG_MODE = True
+
+def draw_debug_info(surface, info_dict, x=10, y=10, line_height=20):
+    font = pygame.font.Font(None, 36) # Font #1
+    for p in info_dict:
+        text_surface = font.render(p, True, GREEN)
+        surface.blit(text_surface, (x, y + p * line_height))
+        selection = input("Please write the menu you wish to see.")
+    for i, (key, value) in enumerate(selection.items()):
+        text = f"{key}: {value}"
+        text_surface = font.render(text, True, GREEN)
+        surface.blit(text_surface, (x, y + i * line_height))
+##################################################
 ##################################################
 # GLOBAL VARIABLES:
 ###################################################
@@ -87,7 +110,7 @@ Rating_Age = "" # Age rating for game
 ##################################################
 abs_cwd_path_ts = os.path.abspath(os.getcwd()) # absolute working directory string
 width, height = 960, 540 # Default APR: 16:9 1.777, RESO DIMEN: 960 x 540 px (1920 x 1080 % 2), scale resolution by 2.
-FONT = pygame.font.Font(None, 36) # Font #1
+FONT = pygame.font.Font(None, 36) # Font #2
 splash_trigger = False # trigger for splash screen
 actors = [] # list for all NPCs and Players
 list_of_all_objects = [] # catalog of all active item, objects, actors and entities
@@ -343,70 +366,6 @@ room_height = current_room[2] # Change Room Dimension
 temporal_measurements = datetime.datetime.now() # Find Date
 splash_trigger = False # Splash trigger
 ##################################################
-### Pathing
-##################################################
-# Globals
-GRID_SIZE = 50
-ROWS, COLS = current_room.room_height // GRID_SIZE, current_room.room_width // GRID_SIZE
-#########################
-class Path():
- def __init__(self,row,col):
-    self.row = row
-    self.col = col
-    self.x = col * GRID_SIZE
-    self.y = row * GRID_SIZE
-    self.color = WHITE
-    self.g = float('inf')  # Distance from start
-    self.h = 0  # Heuristic to goal
-    self.f = float('inf')  # f = g + h
-    self.parent = None
-    self.walkable = True
-    ##
- def get_neighbors(self, grid):
-        neighbors = []
-        directions = [(-1, 0), (1, 0), (0, -1), (0, 1)]  # up, down, left, right
-        for dr, dc in directions:
-            new_row, new_col = self.row + dr, self.col + dc
-            if 0 <= new_row < ROWS and 0 <= new_col < COLS:
-                neighbor = grid[new_row][new_col]
-                if neighbor.walkable:
-                    neighbors.append(neighbor)
-        return neighbors
- ##
-def a_star(start, goal, grid):
-    open_list = []
-    closed_list = set()
-    heapq.heappush(open_list, (start.f, start))
-    start.g = 0
-    start.f = start.g + start.h
-
-    while open_list:
-        current_cell = heapq.heappop(open_list)[1]
-        if current_cell == goal:
-            path = []
-            while current_cell.parent:
-                path.append(current_cell)
-                current_cell = current_cell.parent
-            return path[::-1]  # Return reversed path (start -> goal)
-
-        closed_list.add(current_cell)
-        for neighbor in current_cell.get_neighbors(grid):
-            if neighbor in closed_list:
-                continue
-
-            tentative_g = current_cell.g + 1
-            if tentative_g < neighbor.g:
-                neighbor.parent = current_cell
-                neighbor.g = tentative_g
-                neighbor.h = abs(neighbor.row - goal.row) + abs(neighbor.col - goal.col)
-                neighbor.f = neighbor.g + neighbor.h
-                if all(neighbor != i[1] for i in open_list):
-                    heapq.heappush(open_list, (neighbor.f, neighbor))
-
-    return None  # No path found
- 
-
-##################################################
 ## BRANDING:
 ##################################################
 ### GAME SPLASH SCREEN OBJECT:
@@ -597,32 +556,18 @@ class Object_0(pygame.sprite.Sprite): ### Object Template, showing features one 
       self.liver = 100 # liver
       self.kidneys = 100 # kidneys
       # Pathfinding
-   def pathfinding(self, CELL_SIZE, COLS, ROWS, start, goal):
-       Path(current_room.room_width// CELL_SIZE,current_room.room_height // CELL_SIZE)
-       self.grid = [[Path(row, col) for col in range(COLS)] for row in range(ROWS)]
+   def pathfinding(self,start, goal):
        self.start = start
        self.goal = goal
-       self.path = a_star(self.start,self.goal,self.grid)
+       self.path = 0
        self.obstacles = []
        ##
    def destination(self,tx,ty,grid):    
-       col, row = tx // GRID_SIZE, ty // GRID_SIZE
-       self.cell = grid[row][col]
-       Path.get_neighbors(self.cell)
+       pass
    
    def GOAT(self):
        self.objective = ""
-
-
-       character_clock = 0
-       character_clock += 1
-       if character_clock > len(list_of_all_objects):
-           character_clock = 0
-       if list_of_all_objects[character_clock] == self.objective:
-           self.pathfinding(50,current_room.room_width// 50,current_room.room_width// 50,a_star.current_cell,self.objective)
-           
-
-
+       pass
        ##
    def update(self, dt): # Main behaviour loop
      ## Drains/needs:
@@ -636,11 +581,6 @@ class Object_0(pygame.sprite.Sprite): ### Object Template, showing features one 
         self.sleep -= random.random(2)
      if night_True_day_False == True:
         self.sleep -= random.random(6)
-
-
-
-
-        self.sleep -= random.random(1) # sleepy
      ## Animation/Image_edit:
      self.image = self.img_pre_render
           ## LIFE 
@@ -1029,10 +969,319 @@ async def main(): # Start of game loop
       #  ...
 ##################################################
 ##################################################
+   ### DEBUG Main Loop
+##################################################
+##################################################
+   # Debug display
+    if DEBUG_MODE:
+     debug_info = [debug_NPC,debug_PLAYER,debug_GAME,debug_ROOM,debug_CAMERA,debug_Multiplayer,debug_Audio,debug_NARRATOR,debug_GAMEINFO]
+     NPC = Object_0
+     Player = Object_1
+     Narra = Narrator
+     Audio = 0
+     ROOMS = current_room
+     CAMERA = Camera
+     
+     debug_GAMEINFO = [
+         "GAME SERIAL INFORMATION: ",
+         "Title :", Title,
+         "Author: ", Author,
+         "Co-Author: ", Co_Author,
+         "Company: ", Company,
+         "Genre: ", Genre,
+         "Date oF Release: ", Date_of_Release,
+         "Contact: ", Contact,
+         "Description: ", Decription]  
+
+        
+     debug_Audio = ["To be included."]
+
+
+     debug_NARRATOR = [ "Narrator: ",
+                        "Difficulty: ", Narra.difficulty,
+                        "Personality: ", Narra.personality,
+                        "Intelligence: ", Narra.intelligence,
+                        "Disposition: ", Narra.disposition]
+
+
+
+     debug_ROOM = [
+         "Room Info: ",
+         "Current Room: ", current_room,
+         "Width: ", ROOMS.width,
+         "Height: ", ROOMS.height,
+         "Max # of Spawn points: ", ROOMS.max_spawns,
+         "# of Entities: ", ROOMS.Current_Entities,
+         "Max # of Entities: ", ROOMS.Max_Entities,
+         "Total Entities in Game: ", ROOMS.Total_Entities,
+         "Enitities Difficulty Multiplier: ". ROOMS.Entities_difficulty,
+         "Room Delta Time: ", ROOMS.IN_GAME_TIME]      
+
+
+     debug_CAMERA = [
+         "Camera: ",
+         "Rect: ", CAMERA.rect,
+         "Rect X: ", CAMERA.rect.x,
+         "Rect Y: ", CAMERA.rect.y,
+         "Target: ", CAMERA.target,
+         "Setting: ", CAMERA.setting,
+         "Keys: ", CAMERA.keys]
+
+
+
+     debug_Multiplayer = [
+         
+        "Multiplayer Debug: ",
+        "Multiplayer Setting: ", Multiplayer,
+        "My IP Address: ", My_IP,
+        "My Port: ", PORT,
+        "MP Name: ", player_name,
+        "Client Mode: ", Client,
+        "Connected Address: ", online_host_address,
+        "Connected Port: ", online_host_port,
+        "Server Mode: ", Server,
+        "Max Clients: ", max_clients,
+        "Current Clients: ", len(logs),
+        "Logs :", logs]
+
+     
+     debug_GAME = [
+         "Game: ",
+         "Delta Time: ", dt,
+         "Time + Date", temporal_measurements,
+         "Pause: ", PAUSE,
+         "Splash :", splash_trigger,
+         "Mouse Click: ", interacted,
+         "Touch Taps: ", fingers,
+         "Current Room: ", current_room,
+         "Room Width: ", room_width,
+         "Room Height: ", room_height,
+         "View Dimiensions: ", "Width: ", width, "Height: ", height,
+         "In-Game Clock: ",
+         "Year Length :", year_length,
+         "Day Length (Mins): ", day_length,
+         "Hour Length (Mins): ", hour_len,
+         "In-Game Time: ", hours_past,
+         "In-Game Date: ", date,
+         "Day (False), Night (True): ",night_True_day_False,
+         "Actors: ", actors
+         ]
+
+
+     debug_NPC = [
+               
+                "Biography: "
+                "First Name: ",NPC.fname,
+                "Middle Names: ",NPC.mname,
+                "Surname :", NPC.surname,
+                "D.O.B: ",NPC.DOB,
+                "Age: ", NPC.age,
+                "Ethnicity: ", NPC.Enth,
+
+                "States: ", 
+                "Alert: ", NPC.alert,
+                "Moving: ", NPC.moving,
+                "Attacking: ",NPC.attacking,
+                "Dead: ", NPC.dead,
+                "Fleeing: ", NPC.fleeing,
+
+                "Needs: ",
+                "Hunger: ", NPC.hunger,
+                "Thirst: ", NPC.thirst,
+                "Toilet: ", NPC.toilet,
+                "Hygiene: ", NPC.hygiene,
+                "Social: ", NPC.social,
+                "Sex: ", NPC.sex,
+
+                "Physical Health: ",
+                "Health: ",NPC.health,
+                "Infection: ", NPC.Lympathic, 
+                "Immunity: ", NPC.immunity,
+
+                "Psychology: ",
+                "Mood: ", NPC.mood,
+                "Brain State: ",NPC.brain_state,
+                "Mind/Thoughts: ", NPC.mind_activity,
+                "Cognition: ", NPC.congition_perdinance,
+                "Emotions: ", NPC.emotions,
+                "Personality: ",NPC.personality,
+                "Intelligence: ",NPC.intelligence,
+
+                 "Body Parts:",
+                 "Head: ",NPC.head,
+                 "Heart: ",NPC.heart,
+                 "Brain: ",NPC.brain,
+                 "Liver: ",NPC.liver,
+                 "Kidney: ",NPC.kidneys,
+                 "Body: ", NPC.body,
+                 "Shoulders: ", NPC.shoulders,
+                 "Chest: ",NPC.chest,
+                 "Left Eye: ",NPC.left_eye,
+                 "Left Arm: ",NPC.left_arm,
+                 "Left Leg: ",NPC.left_leg,
+                 "Right Eye: ",NPC.right_eye,
+                 "Right Arm: ",NPC.right_arm,
+                 "Right Leg: ",NPC.right_leg,
+
+                "Collision :",
+                "rect : ", NPC.rect,
+                "rect_x : ", NPC.rect.x,
+                "rect_y : ", NPC.rect.y,
+                "Collided: ", 
+                 
+                "Attack: ",
+                "Damage: ", NPC.damage,
+                "Debuff: ",NPC.debuff,
+                "Damage Calculation: ", NPC.damage_calc,
+
+                "Local Variables: ",
+                "Task: ", NPC.task,
+                "Left Hand: ", NPC.hand_left,
+                "Right Hand: ", NPC.hand_right,
+                "Carry Threat Value: ", NPC.carry_threat_value,
+                "Target: ", NPC.target,
+                "Speed: ", NPC.speed,
+                "Value: ", NPC.value,
+                "Inventory: ", NPC.inventory,
+                "Hostile: ", NPC.hostile,
+                "Mutations: ", NPC.mutations,
+
+                "Global Variables: ",
+                "Job/Career: ",NPC.job_career,
+                "Bank: ",NPC.deposit,
+                "Friends: ",NPC.friends,
+                "Address: ", NPC.address,
+                "Transport: ", NPC.transport,
+
+               "Sprites_Loaded: ",
+               "Original Sprites: ", NPC.img_org,
+               "Attack Sprites: ", NPC.img_attack,
+               "Death Sprite: ", NPC.image_death,
+               "Current Sprite: ", NPC.image,
+                "Next Sprite: ", NPC.img_pre_render,
+
+                "Animation: ",
+                "Max Frames: ", NPC.max_frames,
+                "Current Frame: ", NPC.current_frame,
+                "Animation Threshold Time :", NPC.animation_time,
+                "Current Animation Step: ", NPC.current_time ]
+     
+     
+     
+     debug_PLAYER = [
+               
+                "Biography: "
+                "First Name: ",Player.fname,
+                "Middle Names: ",Player.mname,
+                "Surname :", Player.surname,
+                "D.O.B: ",Player.DOB,
+                "Age: ", Player.age,
+                "Ethnicity: ", Player.Enth,
+
+               
+                "States: ", 
+                "Alert: ", Player.alert,
+                "Moving: ", Player.moving,
+                "Attacking: ",Player.attacking,
+                "Dead: ", Player.dead,
+                "Fleeing: ", Player.fleeing,
+
+                "Needs: ",
+                "Hunger: ", Player.hunger,
+                "Thirst: ", Player.thirst,
+                "Toilet: ", Player.toilet,
+                "Hygiene: ", Player.hygiene,
+                "Social: ", Player.social,
+                "Sex: ", Player.sex,
+
+                "Physical Health: ",
+                "Health: ",Player.health,
+                "Infection: ", Player.Lympathic, 
+                 "Immunity: ", Player.immunity,
+
+                "Psychology: ",
+                "Mood: ", Player.mood,
+                "Brain State: ",Player.brain_state,
+                "Mind/Thoughts: ", Player.mind_activity,
+                "Cognition: ",Player.congition_perdinance,
+                "Emotions: ", Player.emotions,
+                "Personality: ",Player.personality,
+                "Intelligence: ",Player.intelligence, 
+
+                 "Body Parts:",
+                 "Head: ",Player.head,
+                 "Heart: ",Player.heart,
+                 "Brain: ",Player.brain,
+                 "Liver: ",Player.liver,
+                 "Kidney: ",Player.kidneys,
+                 "Body: ", Player.body,
+                 "Shoulders: ", Player.shoulders,
+                 "Chest: ",Player.chest,
+                 "Left Eye: ",Player.left_eye,
+                 "Left Arm: ",Player.left_arm,
+                 "Left Leg: ",Player.left_leg,
+                 "Right Eye: ",Player.right_eye,
+                 "Right Arm: ",Player.right_arm,
+                 "Right Leg: ",Player.right_leg,
+
+                "Attack: ",
+                "Damage: ", Player.damage,
+                "Debuff: ",Player.debuff,
+                "Damage Calculation: ", Player.damage_calc,
+                 
+             "Local Variables: ",
+                "Task: ", Player.task,
+                "Left Hand: ", Player.hand_left,
+                "Right Hand: ", Player.hand_right,
+                "Carry Threat Value: ", Player.carry_threat_value,
+                "Target: ", Player.target,
+                "Speed: ", Player.speed,
+                "Value: ", Player.value,
+                "Inventory: ", Player.inventory,
+                "Hostile: ", Player.hostile,
+                "Mutations: ", Player.mutations,
+
+                "Global Variables: ",
+                "Job/Career: ",Player.job_career,
+                "Bank: ",Player.deposit,
+                "Friends: ",Player.friends,
+                "Address: ", Player.address,
+                "Transport: ", Player.transport,
+
+                 "Sprites_Loaded: ",
+               "Original Sprites: ", Player.img_org,
+               "Attack Sprites: ", Player.img_attack,
+               "Death Sprite: ", Player.image_death,
+               "Current Sprite: ", Player.image,
+                "Next Sprite: ", Player.img_pre_render,
+
+                "Animation: ",
+                "Max Frames: ", Player.max_frames,
+                "Current Frame: ", Player.current_frame,
+                "Animation Threshold Time :", Player.animation_time,
+                "Current Animation Step: ", Player.current_time,
+
+                "Collision :",
+                "rect : ", Player.rect,
+                "rect_x : ", Player.rect.x,
+                "rect_y : ", Player.rect.y,
+                "Collided: ", 
+ ]          
+  
+     
+       
+    
+   
+
+    draw_debug_info(screen, debug_info)
+
+
+
+##################################################
+##################################################
 ##################################################
 ##### Scene Hyirachy:
 ##################################################
-    
     if SPLASH == True: # Splash scene for Branding
        screen.blit(Company_branding,(0,0)) # Small image for publicity 
        Splash.draw(screen) # Draw splash
