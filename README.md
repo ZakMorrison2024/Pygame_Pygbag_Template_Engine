@@ -4,9 +4,6 @@
 - I wrote this myself. w/o GPT!!
 ### Planned:
 - Script Clean up! (modula assets?)
-- Local/Network Multiplayer functionality
-- 
--
 ////////////////////////////////////////////////////////////////////////////////////////////
 
 # PyGBag_PyGame_Template
