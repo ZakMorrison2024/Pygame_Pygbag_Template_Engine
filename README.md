@@ -1,3 +1,6 @@
+# please note this isn't finished, has bugs and ineffiencies
+-
+-
 # PyGBag_PyGame_Template
 For anyone who wants a head start with their PyGame Projects and want to port to HTML5 for upload on Itch.io
 
