@@ -2,7 +2,7 @@
 # Please note: This isn't finished, has bugs and ineffiencies!
 /////////////////////////////////////////////////////////////////////////////////////////////
 ### Planned:
-- Script Clean up!
+- Script Clean up! (modula assets?)
 - Local/Network Multiplayer functionality
 - 
 -
