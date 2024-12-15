@@ -10,7 +10,8 @@
 # ///
 
 #####################################################
-
+## Libraries:
+##################################################
 import pygame
 from pygame.locals import QUIT
 import os
@@ -19,9 +20,7 @@ import math
 import sys
 
 ###################################################
-
-
-
+##################################################
 
 #Pre-defintions: (remove if unwanted, added for consideration.)
 
