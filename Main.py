@@ -373,7 +373,6 @@ running = True
    ##################################################
 def check_client_timeout(client_socket):
        try:
-        # Send a small packet of data to check if the socket is still open
          for client in log.keys():
           client_socket.send(b"PING")
         return True
@@ -400,9 +399,9 @@ def handle_client(client_socket, client_address, client_message, dt):
    for client in log.keys():
       client_socket.send(key_value_log.encode())
 
- except Exception as e:
+   except Exception as e:
         print(f"Error: {e}")
-    finally:
+     finally:
         client_socket.close()
 
  #####################
@@ -427,23 +426,33 @@ def start_server():
 def send_message(message):
     try:
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            s.setblocking(0)
             s.connect((online_host_address, online_host_port))
             if s:
                readable, writable, errored = select.select([], [s], [], 0)
                if writable:
                s.send(message.encode())
-               recv_message = s.recv(1024).decode()
-               return recv_message
+               print("message sent!")
+               
+               if s.recv(1024):
+                  recv_message(s.recv(1024))
+               return print("message recieved!")
        except Exception as e:
          return "Error: Unable to connect to server."
  #####################
 def recv_message(message):
     try:
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            s.setblocking(0)
             readable, writable, errored = select.select([s], [], [], 0)
             if readable:
             recv_message = s.recv(1024).decode()
             return see_message(recv_message)
+    except Exception as e:
+       return "Error: Unable to recieve data from server."
+    except BlockingIOError:
+       s.setblocking(0)
+       send_message(My_IP +" | "+ temporal_measurements +" : "+"404, didn't get last message.")
 
  #####################
    ##################################################
@@ -458,12 +467,14 @@ def multiplayer():
    if Client == True:
       online_host_address = input("Type in IP of HOST")
       online_host_port = input("Type in PORT of HOST")
-      if online_host_address, online_host_host != 0:
+      if online_host_address, online_host_host:
          send_message(My_IP +" | "+ temporal_measurements +" : "+"I have connected! Thanks for having me.")
 
    if Server == True:
+      PORT = input("Please pick a port number i.e. 8080 or 5050")
       start_server()
       print(My_IP)
+      print(PORT)
      #####################
 ##################################################
 ####################################################################################################
