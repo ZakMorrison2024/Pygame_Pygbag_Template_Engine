@@ -354,7 +354,7 @@ obj_Player = Object_1(10,10,Player) # Spawns player at x:10, y:10
 # Multi-Spawner
 i ++
 if i < Max_Entities:
-  NPC_MULTI.append(NPC = Object_0(rand_random(room_ROOM_width),rand_random(room_ROOM_width),Enemy))
+  NPC_MULTI.append(Object_0(rand_random(room_ROOM_width),rand_random(room_ROOM_width),Enemy))
 
 ####################################################################################################
 ####################################################################################################
