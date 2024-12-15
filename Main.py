@@ -179,8 +179,8 @@ class splash(pygame.sprite.Sprite):
 ##################################################
 ### Classes/Objects (MENU):
 ##################################################
-################### Button_0
-class Button_0(pygame.sprite.Sprite): ### Object Template, showing features one can add to object to define the objects nature and interactions (Non-playable Character Ver.)
+################### Button_0 # PLAY
+class Button_0(pygame.sprite.Sprite): ### Object Template
    def __init__(self, x, y, *groups): # Intialisation/defintions
       super().__init__(*groups) 
       ## Primary image placeholder:
@@ -195,6 +195,51 @@ class Button_0(pygame.sprite.Sprite): ### Object Template, showing features one 
             MENU = False # menu finished
             ROOM = True # game room start
             current_rooms = game_level[0] # game level
+            self.kill() # destory button
+################### Button_1 # Multiplayer
+class Button_1(pygame.sprite.Sprite): ### Object Template
+   def __init__(self, x, y, *groups): # Intialisation/defintions
+      super().__init__(*groups) 
+      ## Primary image placeholder:
+      self.img_org =[pygame.image.load(abs_cwd_path_ts+os.path.join("/imgs","####-INSERT_NAME_HERE-####.png")))]
+      self.image = self.img_org # Set Default image
+      self.rect = self.image.get_rect() # Set Colision Rectangle
+      self.rect.x = x # Rect X
+      self.rect.y = y # Rect Y
+   def update(self): # Behaviour loop
+      if self.rect.collidepoint(pygame.mouse.get_pos()): # Check collision with mouse
+         if interacted == True: # if interacted
+            Multiplayer = True
+            self.kill()
+################### Button_2 # SERVER
+class Button_2(pygame.sprite.Sprite): ### Object Template
+   def __init__(self, x, y, *groups): # Intialisation/defintions
+      super().__init__(*groups) 
+      ## Primary image placeholder:
+      self.img_org =[pygame.image.load(abs_cwd_path_ts+os.path.join("/imgs","####-INSERT_NAME_HERE-####.png")))]
+      self.image = self.img_org # Set Default image
+      self.rect = self.image.get_rect() # Set Colision Rectangle
+      self.rect.x = x # Rect X
+      self.rect.y = y # Rect Y
+   def update(self): # Behaviour loop
+      if self.rect.collidepoint(pygame.mouse.get_pos()): # Check collision with mouse
+         if interacted == True: # if interacted
+            Server = True
+            self.kill() # destory button
+################### Button_3 # Client
+class Button_3(pygame.sprite.Sprite): ### Object Template
+   def __init__(self, x, y, *groups): # Intialisation/defintions
+      super().__init__(*groups) 
+      ## Primary image placeholder:
+      self.img_org =[pygame.image.load(abs_cwd_path_ts+os.path.join("/imgs","####-INSERT_NAME_HERE-####.png")))]
+      self.image = self.img_org # Set Default image
+      self.rect = self.image.get_rect() # Set Colision Rectangle
+      self.rect.x = x # Rect X
+      self.rect.y = y # Rect Y
+   def update(self): # Behaviour loop
+      if self.rect.collidepoint(pygame.mouse.get_pos()): # Check collision with mouse
+         if interacted == True: # if interacted
+            Client = True
             self.kill() # destory button
 ###########################################################################################################################################
 ##################################################
