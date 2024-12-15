@@ -433,12 +433,22 @@ def send_message(message):
                if writable:
                s.send(message.encode())
                print("message sent!")
-               
-               if s.recv(1024):
-                  recv_message(s.recv(1024))
-               return print("message recieved!")
+            try:
+               data = s.recv(1024)
+               if data:
+                  recv_message(data)
+                  return print("message recieved!")
+               else:
+                   print("No data received.")
+                except BlockingIOError:
+                 s.setblocking(0)
+                 print("No data available (BlockingIOError).")
+                except Exception as e:
+                 print(f"An error occurred: {e}")
+                   pass
        except Exception as e:
-         return "Error: Unable to connect to server."
+         print (f"Error: Unable to connect to server. {e}")
+                  pass
  #####################
 def recv_message(message):
     try:
