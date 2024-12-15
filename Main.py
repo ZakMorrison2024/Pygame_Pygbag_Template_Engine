@@ -564,18 +564,18 @@ def multiplayer(): # multiplayer option
 ####################################################################################################
 #Groups:
 Splash = pygame.sprite.Group() # Splashscreen Group
-Player = pygame.sprite.Group() # Player Group
+Player_control = pygame.sprite.Group() # Player Group
 Enemy = pygame.sprite.Group() # Enemy Group
 Menu = pygame.sprite.Group() # Menu Group
 # Branding Objects:
-Company_branding = splash(0,0,Splash) # Company branding object
+Company_branding = splash(0,0,Splash) # Company_branding_object
 # Menu Objects:
 Play_button = Button_0(0,0,Menu) # Play_button
 Multiplayer_button = Button_1(0,0,Menu) # Multiplayer_button
 Server_button = Button_2(0,0,Menu) # Server_button
 Client_button = Button_3(0,0,Menu) # Client_button
 # Game Objects:
-obj_Player = Object_1(0,0,Player) # Player object
+obj_Player = Object_1(0,0,Player_control) # Player_object
 ####################################################################################################
 ####################################################################################################
 #Audio intialisation (PyGBag has some issues with audio, placeholders from a game I made but you get the point!)
@@ -669,7 +669,7 @@ async def main(): # Start of game loop
            screen.blit(obj_Player) # Render Player
            screen.blit(NPC_MULTI) # Render Multi-spawned NPCs
            Enemy.draw(screen) # Draw Enemy
-           Player.draw(screen) # Draw Player
+           Player_control.draw(screen) # Draw Player
            # ...
        if current_room == game_levels[1]:
            for Current_Entities < Max_Entities and i < Total_Entities: # if there currently less NPC in view and less than the total in the map
@@ -682,7 +682,7 @@ async def main(): # Start of game loop
            screen.blit(obj_Player) # Render Player
            screen.blit(NPC_MULTI) # Render Multi-spawned NPCs
            Enemy.draw(screen) # Draw Enemy
-           Player.draw(screen) # Draw Player
+           Player_control.draw(screen) # Draw Player
     pass # Main game room
 ##################################################
 ##################################################
