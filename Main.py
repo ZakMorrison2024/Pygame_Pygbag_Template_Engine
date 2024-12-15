@@ -358,11 +358,17 @@ if i < Max_Entities:
 ## For device touch mechaninics:
 #fingers = [] # Touch Register
 
+##################################################
 # Primary Game Loop:
+##################################################
+##################################################
+##################################################
 async def main():
     #Globals (to reach inside game loop):
     global dt
+   ##################################################
     #Event System/Control System:
+   ##################################################
     while running:
      for event in pygame.event.get():
         if event.type == QUIT:
