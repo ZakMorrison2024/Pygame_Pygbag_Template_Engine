@@ -46,3 +46,22 @@ def start_server():
 
 if __name__ == "__main__":
     start_server()
+
+################## client
+
+# Function to send choice to server
+def send_choice(choice):
+    try:
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            s.connect(('localhost', 5555))
+            s.send(choice.encode())
+            result = s.recv(1024).decode()
+            return result
+    except Exception as e:
+        return "Error: Unable to connect to server."
+
+        if result:
+            result_text = FONT.render(result, True, RED)
+
+if __name__ == "__main__":
+    game_loop()
