@@ -570,14 +570,14 @@ async def main():
     if MENU == True:
        pass # Menu to select features
     if ROOM == True:
-       if current_room[0]:
+       if current_room = game_room[0]:
             screen.blit(obj_NPC) # Render NPC
             screen.blit(obj_Player) # Render Player
             screen.blit(NPC_MULTI) # Render Multi-spawned NPCs
             Enemy.draw(screen) # Draw Enemy
             Player.draw(screen) # Draw Player
             # ...
-      if current_room[1]:
+      if current_room = game_room[1]:
             # ...
       pass # Main game room
 ##################################################
