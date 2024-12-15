@@ -80,6 +80,27 @@ online_host_port = ""
 SPLASH = True # Splash Window
 MENU = False # Menu Window
 ROOM = False # Room Placeholder
+################################################
+### Camera
+################################################
+class Camera:
+   def __init__(self, width, height):
+        self.camera = pygame.Rect(0, 0, width, height)
+        self.world_width = 0
+        self.world_height = 0
+    def apply(self, entity):
+        return entity.rect.move(self.camera.topleft)
+   def update(self, target_rect):
+        x = -target_rect.centerx + int(self.camera.width / 2)
+        y = -target_rect.centery + int(self.camera.height / 2)
+        x = min(0, x)
+        y = min(0, y)
+        x = max(-(self.world_width - self.camera.width), x)
+        y = max(-(self.world_height - self.camera.height), y)
+        self.camera = pygame.Rect(x, y, self.camera.width, self.camera.height)
+   def set_world_size(self, width, height):
+        self.world_width = width
+        self.world_height = height
 ##################################################
 ### Room: ROOM_0. defintions: (Room #0)
 ##################################################
@@ -106,12 +127,6 @@ current_room = game_levels[0]
 room_width = current_room.width
 room_height = current_room.height
 temporal_measurements = datetime.datetime.now()
-################################################
-
-
-
-
-
 
 ##################################################
 ## BRANDING:
