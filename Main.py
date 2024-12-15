@@ -92,6 +92,14 @@ class Camera:
         self.room_height = 0
     def apply(self, entity):
         return entity.rect.move(self.camera.topleft)
+   def move_manually(self,vx,vy):
+        x = -vx + int(self.camera.width / 2)
+        y = -vy + int(self.camera.height / 2)
+        x = min(0, x)
+        y = min(0, y)
+        x = max(-(self.room_width - self.camera.width), x)
+        y = max(-(self.room_height - self.camera.height), y)
+        self.camera = pygame.Rect(x, y, self.camera.width, self.camera.height)
    def update(self, target_rect):
         x = -target_rect.centerx + int(self.camera.width / 2)
         y = -target_rect.centery + int(self.camera.height / 2)
@@ -159,7 +167,7 @@ def room_1():
 dt = 0 # Delta Time/Step-Up Clock
 PAUSE = False
 game_levels = [room_0(),room_1()]
-current_room = game_levels[0]
+current_room = splash_room
 room_width = current_room.width
 room_height = current_room.height
 temporal_measurements = datetime.datetime.now()
