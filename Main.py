@@ -400,11 +400,10 @@ def start_server():
         print(f"Player connected from {client_address}")
         threading.Thread(target=handle_client, args=(client_socket, client_address, client_message)).start()
         pass
-
+#####################
    ##################################################
    # Client:
    ##################################################
-
 def send_message(message):
     try:
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
@@ -418,11 +417,13 @@ def send_message(message):
    ##################################################
    # Client and Server:
    ##################################################
-
 def see_message(message):
    if message:
             result_text = FONT.render(message, True, RED)
       #####################
+
+
+
 ##################################################
 ####################################################################################################
 ####################################################################################################
