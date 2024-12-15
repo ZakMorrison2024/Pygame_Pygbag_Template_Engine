@@ -420,7 +420,7 @@ class Button_0(pygame.sprite.Sprite): ### Object Template
    def update(self): # Behaviour loop
       if self.rect.collidepoint(pygame.mouse.get_pos()): # Check collision with mouse
          if interacted == True: # if interacted
-            global MENU, ROOM
+            global MENU, ROOM, current_rooms
             MENU = False # menu finished
             ROOM = True # game room start
             current_rooms = game_levels[0] # game level
@@ -438,8 +438,9 @@ class Button_1(pygame.sprite.Sprite): ### Object Template
    def update(self): # Behaviour loop
       if self.rect.collidepoint(pygame.mouse.get_pos()): # Check collision with mouse
          if interacted == True: # if interacted
-            Multiplayer = True
-            self.kill()
+          global Multiplayer
+          Multiplayer = True
+          self.kill()
 ################### Button_2 # SERVER
 class Button_2(pygame.sprite.Sprite): ### Object Template
    def __init__(self, x, y, *groups): # Intialisation/defintions
@@ -453,6 +454,7 @@ class Button_2(pygame.sprite.Sprite): ### Object Template
    def update(self): # Behaviour loop
       if self.rect.collidepoint(pygame.mouse.get_pos()): # Check collision with mouse
          if interacted == True: # if interacted
+            global Server
             Server = True
             self.kill() # destory button
 ################### Button_3 # Client
@@ -468,6 +470,7 @@ class Button_3(pygame.sprite.Sprite): ### Object Template
    def update(self): # Behaviour loop
       if self.rect.collidepoint(pygame.mouse.get_pos()): # Check collision with mouse
          if interacted == True: # if interacted
+            global Client
             Client = True
             self.kill() # destory button
 ###########################################################################################################################################
@@ -475,20 +478,23 @@ class Button_3(pygame.sprite.Sprite): ### Object Template
 ### Classes/Objects (in-Game):
 ##################################################
 ##################################################
+
 ################### Narrator_AI_Story_driver
 class Narrator(pygame.sprite.Sprite): ### Narrator
-   def __init__(self, x, y, *groups): # Intialisation/defintions
+   def __init__(self,*groups): # Intialisation/defintions
       super().__init__(*groups) 
-      self.difficulty = random.random(1)
-      self.personality = "Welcoming"
-      self.intelligence = "Low"
+      self.difficulty = 1+(random.random(1)*self.disposition)
+      self.personality = random.choice(("Angel", 3),("Good", 5),("Scornful", 7),("Evil", 10))
+      self.intelligence = random.choice(("Dumb", 3),("Average", 5),("Above-Average", 7),("Genius", 10))
       self.disposition = [] # Actors disposition to those they meet
+      self.disposition.append(random.choice(("Easy", 3),("Medium", 5),("Hard", 7),("Super", 10)))
    def tasks(self):
-       pass
+       Tasks = ["find", "steal", "discover","capture","secure","race", "invent"]
    def events(self):
-       pass 
+       Random_events = ["Free-gift", "Investation","Murder Mystery"]
    def dialog(self):
-       pass
+       One-liners = []
+
    def update(self, dt):
        pass
 ##################################################
@@ -559,20 +565,20 @@ class Object_0(pygame.sprite.Sprite): ### Object Template, showing features one 
       self.value = random.random(2000) # object market value
       self.inventory = [] # object invetory
       self.inventory.append("Nothing")
-      self.hostile = False # object temperament
+      self.hostile = random.choice(False, False, False, False, False, False, True) # object temperament
       self.damage = random.random(10) # base damage
-      self.debuff = 2 # base draw back
+      self.debuff = random.random(10) # base draw back
       self.damage_calc = 0 # varaible for calculation
       self.mutations = [] # potential mutations
       if random.random(10) == 10:
        self.mutations.append(random.choice("Tenticle", "Autism", "Third Arm", "Two Penises", "Three Breasts"))
-      self.history = [] # journal
-      self.history.append("Born.")
-      self.history.append("Lost their first tooth.")
-      self.history.append("First day of School.")
-      self.history.append("Failed "+ random.choice("Maths", "English", "Spanish", "French", "Biology", "Physics")+".")
-      self.history.append("First kiss, wasn't all they imagined it too be.")
-      self.history.append("They seem to be in melacholy, they didn't want to be stuck up here with me ....")
+      timeline = year - self.age #(YY/DD) + Time: (Hour)
+      self.history.append("LogDate: "+timeline+" | "+random.randint(year_length)+" (yy/dd) : Born," + random.choice(" from what I was told, on a cold muggy day.", " my parents were estatic about my arrival, they spoiled me all through my up-bring."," urgh! why did it ever happen."))
+      self.history.append("LogDate: "+(int(timeline) + 5)+" | "+random.randint(year_length)+" (yy/dd) : " + random.choice(("Lost their first tooth. it's hurt!"),( "Got in their first fight, they" +random.choice(" Lost."," Won.")),"found their first £1.") )
+      self.history.append("LogDate: "+(int(timeline) + 7)+" | "+random.randint(year_length)+" (yy/dd) : First day of School."+ random.choice(" It was very anexity provoking", " They loved every minuite of it."," They just sat around reading all day."))
+      self.history.append("LogDate: "+(int(timeline) + 12)+" | "+random.randint(year_length)+" (yy/dd) : "+random.choice("They failed : ", "They succeeded : ")+random.choice("Maths", "English", "Spanish", "French", "Biology", "Physics")+".")
+      self.history.append("LogDate: "+(int(timeline) + 15)+" | "+random.randint(year_length)+" (yy/dd) : "+random.choice(" They had their First kiss, "+random.choice("wasn't all they imagined it too be.", "they hopelessly they fell in-love that day.",("it was with a member of the same sex."+random.choice(" They really enjoyed it.", " They weren't so enfused."," They found love at first sight.")))))
+      self.history.append("LogDate: "+(int(timeline) + 20)+" | "+random.randint(year_length)+" (yy/dd) : They unfortuantly lost someone close to them, "+random.choice("it still haunts them to this day.", "life is a game and they embraced that loss was a natural part of life.", "they non-chalantly, ignored my sympathy..."))
       # Psychological
       self.mood = random.choice(("Sad", 3),("Happy", 7),("Lonely", 4),("Estatic", 9),("Miserable", 1))
       self.brain_state = random.choice(("Scizophrenic", 3),("Ego-driven", 7),("Average", 5),("Delusional", 9),("Autism", 4))
@@ -586,7 +592,8 @@ class Object_0(pygame.sprite.Sprite): ### Object Template, showing features one 
       self.job_career = random.choice("Carpenter", "Security", "Chef", "Model", "Police", "Professional Theif", "Judge", "Paramedic", "Dog-Trainer") 
       self.deposit = "£: "+ int(random.randint(100)) # bank
       self.friends = [] # social
-      self.friends.append(actors[random.randint(len(actors))].personality >= 5)
+      self.friends.append(actors[random.randint(len(actors))].personality >= 3)
+      self.disposition.append(self.friends[0], "I wonder what they really think off me?")
       self.address = "SS14" # address
       self.transport = "Public" # transport
       # Health
@@ -614,6 +621,7 @@ class Object_0(pygame.sprite.Sprite): ### Object Template, showing features one 
       self.stanima = random.random(1)
       # Pathfinding
    def pathfinding(self,goal):
+       self.moving = True
        self.start = self.rect.x, self.rect.y
        self.goal = goal.x, goal.y
        self.distance = math.sqrt((self.goal.x - self.rect.x)**2 + (self.goal.y - self.rect.y)**2)
@@ -631,6 +639,7 @@ class Object_0(pygame.sprite.Sprite): ### Object Template, showing features one 
        if planning == True:
            self.goal.used = True
            self.goal = None
+           self.moving = False
    def place_nodes(self,distance,tx,ty):
        distance = distance
        tx = tx
@@ -643,7 +652,7 @@ class Object_0(pygame.sprite.Sprite): ### Object Template, showing features one 
                  direction = direction.normalize()  # Normalize the vecto
               dx = self.max_distance_to_goal * math.cos(math.radians(direction))
               dy = self.max_distance_to_goal * math.sin(math.radians(direction))
-              self.nodes.append(self.path_builder(self,dx,dy,direction))
+              self.nodes.append(self.path_builder(self,dx,dy))
               new_distance = math.sqrt((self.nodes.x - self.rect.x)**2 + (self.nodes.y - self.rect.y)**2)
               if self.nodes.x > self.rect.x:
                 self.rect.x + self.speed
@@ -662,11 +671,13 @@ class Object_0(pygame.sprite.Sprite): ### Object Template, showing features one 
                 if self.full_distance > displacement:
                    self.place_nodes(distance,self.goal.x,self.goal.y)
                 else:
+                    self.moving = False
                     return True
          else:
+             self.moving = False
              return True
          #
-   def path_builder(self,tx,ty,direction): #path builder   
+   def path_builder(self,tx,ty): #path builder   
        pygame.draw.ellipse(screen, RED, tx,ty, width=5)
        #
    def GOAT(self): # needs/tasks organisation
@@ -777,6 +788,7 @@ class Object_0(pygame.sprite.Sprite): ### Object Template, showing features one 
                            self.history += "Log: Date: (yy/dd) | "+str(year)+" | "+ str(date)+ " | Time: "+ str(hours_past) + ":  'zZzZzZzZzZzZzZzZz'!!" 
                self.needs.pop(self.objective.benefit)
                self.objective = 0
+               self.moving = False
                
 
 
@@ -816,7 +828,7 @@ class Object_0(pygame.sprite.Sprite): ### Object Template, showing features one 
            actors.pop(self)
      if self.death == False: # Check if Alive/Active
       # Make instance rotate around point (define point by px,py)
-      px,py = self.target.x,self.target.y # center point of rotation
+      px,py = self.goal.x,self.goal.y # center point of rotation
       rel_x, rel_y = round(px - self.rect.x), round(py - self.rect.y) # find difference between target and rect coordinates
       angle = round((180/math.pi)*+math.atan2(rel_x,rel_y)) # Trignometery for rotation
       self.image = pygame.transform.rotate(self.image_clean,angle) # rotate image
@@ -881,7 +893,8 @@ class Object_1(pygame.sprite.Sprite): ### Object Template, showing features one 
         self.fname = random.choice("John", "Carlos", "Ben","Harry", "William")
       else:
         self.fname = random.choice("Lauren","Charlotte","Rebecca","Lucy","Mary")
-      self.DOB = "Year: " + random.randrange(str(year) - 10, str(year) - 20) + "  Day: "+ random.randint(year_length)+"."
+      self.age = random.randrange(15, 40)
+      self.DOB = "Year: " + str(year - (self.age)) + "  Day: "+ random.randint(year_length)+"."
      
       self.mname = [random.choice("Andrew", "Kieran", "Alice","John", "Maggie") ] 
       if random.choice[0,0,0,1] == 1:
@@ -889,7 +902,6 @@ class Object_1(pygame.sprite.Sprite): ### Object Template, showing features one 
 
       self.surname = random.choice("Morrison", "Martins", "Alexis","Gander", "Caines")
       self.Ethnicity = random.choice("Caucaisan", "African", "South-East", "Euro", "South-West")
-      self.age = random.randint(30)
       # States:
       self.alert = False # whether the object is alerted
       self.moving = False # whether the object is moving
@@ -916,21 +928,26 @@ class Object_1(pygame.sprite.Sprite): ### Object Template, showing features one 
       self.speed = random.random(5) # object speed
       self.value = random.random(2000) # object market value
       self.inventory = [] # object invetory
-      self.inventory.append("Nothing")
       self.hostile = False # object temperament
       self.damage = random.random(10) # base damage
-      self.debuff = 2 # base draw back
+      self.debuff = random.random (10) # base draw back
       self.damage_calc = 0 # varaible for calculation
       self.mutations = [] # potential mutations
       if random.random(10) == 10:
-       self.mutations.append(random.choice("Tenticle", "Autism", "Third Arm", "Two Penises", "Three Breasts"))
+       self.mutations.append(random.choice("Tenticle", "Autism", "Third Arm", "Two Penises", "Three Breasts","Rat Nose", "No Fingers", "Five Eyes"))
       self.history = [] # journal
-      self.history.append("Born.")
-      self.history.append("Lost their first tooth.")
-      self.history.append("First day of School.")
-      self.history.append("Failed "+ random.choice("Maths", "English", "Spanish", "French", "Biology", "Physics")+".")
-      self.history.append("First kiss, wasn't all they imagined it too be.")
-      self.history.append("They seem to be in melacholy, they didn't want to be stuck up here with me ....")
+
+
+   
+      timeline = year - self.age #(YY/DD) + Time: (Hour)
+      self.history.append("LogDate: "+timeline+" | "+random.randint(year_length)+" (yy/dd) : Born," + random.choice(" from what I was told, on a cold muggy day.", " my parents were estatic about my arrival, they spoiled me all through my up-bring."," urgh! why did it ever happen."))
+      self.history.append("LogDate: "+(int(timeline) + 5)+" | "+random.randint(year_length)+" (yy/dd) : " + random.choice(("Lost their first tooth. it's hurt!"),( "Got in their first fight, they" +random.choice(" Lost."," Won.")),"found their first £1.") )
+      self.history.append("LogDate: "+(int(timeline) + 7)+" | "+random.randint(year_length)+" (yy/dd) : First day of School."+ random.choice(" It was very anexity provoking", " They loved every minuite of it."," They just sat around reading all day."))
+
+
+      self.history.append("LogDate: "+(int(timeline) + 12)+" | "+random.randint(year_length)+" (yy/dd) : "+random.choice("They failed : ", "They succeeded : ")+random.choice("Maths", "English", "Spanish", "French", "Biology", "Physics")+".")
+      self.history.append("LogDate: "+(int(timeline) + 15)+" | "+random.randint(year_length)+" (yy/dd) : "+random.choice(" They had their First kiss, "+random.choice("wasn't all they imagined it too be.", "they hopelessly they fell in-love that day.",("it was with a member of the same sex."+random.choice(" They really enjoyed it.", " They weren't so enfused."," They found love at first sight.")))))
+      self.history.append("LogDate: "+(int(timeline) + 20)+" | "+random.randint(year_length)+" (yy/dd) : They unfortuantly lost someone close to them, "+random.choice("it still haunts them to this day.", "life is a game and they embraced that loss was a natural part of life.", "they non-chalantly, ignored my sympathy..."))
       # Psychological
       self.mood = random.choice(("Sad", 3),("Happy", 7),("Lonely", 4),("Estatic", 9),("Miserable", 1))
       self.brain_state = random.choice(("Scizophrenic", 3),("Ego-driven", 7),("Average", 5),("Delusional", 9),("Autism", 4))
@@ -944,7 +961,8 @@ class Object_1(pygame.sprite.Sprite): ### Object Template, showing features one 
       self.job_career = random.choice("Carpenter", "Security", "Chef", "Model", "Police", "Professional Theif", "Judge", "Paramedic", "Dog-Trainer") 
       self.deposit = "£: "+ int(random.randint(100)) # bank
       self.friends = [] # social
-      self.friends.append(actors[random.randint(len(actors))].personality >= 5)
+      self.friends.append(actors[random.randint(len(actors))].personality >= 3)
+      self.disposition.append(self.friends[0], "I wonder what they really think off me?")
       self.address = "SS14" # address
       self.transport = "Public" # transport
       # Health
@@ -997,6 +1015,18 @@ class Object_1(pygame.sprite.Sprite): ### Object Template, showing features one 
             angle = round((180/math.pi)*+math.atan2(rel_x,rel_y)) # Trignometery for rotation
             self.image = pygame.transform.rotate(self.image_clean,angle) # rotate image
             self.rect = self.image.get_rect(center=self.rect.center) # set new boundary
+            ### Selecting NPCs
+            mx,my = pygame.mouse.get_pos()
+            if check_collision(mx,my,list_of_all_objects.rect):
+                if pygame.mouse.get_pressed(1):
+                   self.goal = Object_0.collidepoint(mx,my)
+                    
+            # UI/Social:
+            if self.goal == Object_0:
+                egageing = True
+                 
+
+
             if self.current_frame >= self.max_frame: # Animation Frame loop
                 self.current_frame = 0 # reset current frame
                 if self.moving == True or self.attacking == True: # Animation Trigger
@@ -1202,6 +1232,8 @@ class Audi():
         pass 
     def Sounds(self):
         pass   
+    def Play(self):
+        pass
 
 
 ouch = pygame.mixer.Sound(os.path.abspath(os.getcwd()+os.path.join("/SFX"+"/SFX_Player_Hurt.mp3")))
@@ -1424,7 +1456,7 @@ async def main(): # Start of game loop
                 "rect : ", NPC.rect,
                 "rect_x : ", NPC.rect.x,
                 "rect_y : ", NPC.rect.y,
-                "Collided: ", 
+                "Collided: ", check_collision(NPC.rect,actors.rect),
                  
                 "Attack: ",
                 "Damage: ", NPC.damage,
@@ -1562,7 +1594,7 @@ async def main(): # Start of game loop
                 "rect : ", Player.rect,
                 "rect_x : ", Player.rect.x,
                 "rect_y : ", Player.rect.y,
-                "Collided: ", 
+                "Collided: ", check_collision(Player.rect,actors.rect),
  ]          
 ##################################################
 ##################################################
