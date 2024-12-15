@@ -1,76 +1,115 @@
-//////////////////////////////////////////////////////////////////////////////////////////////
-# Please note: This isn't finished, has bugs and ineffiencies!
-/////////////////////////////////////////////////////////////////////////////////////////////
-- I wrote this myself. w/o GPT!!
-### Planned:
-- Script Clean up! (modula assets?)
-////////////////////////////////////////////////////////////////////////////////////////////
+# Simulation Game Engine
 
-# PyGBag_PyGame_Template
-For anyone who wants a head start with their PyGame Projects and want to port to HTML5 for upload on Itch.io
-
-## Overview
-
-This is a Template you may use for your Pygame games, it is PyGBag ready. This allows you to port to HTML5 and upload your game to HTML-Game hosting platforms like Itch.io or Gamejolt.com.
-
-
-## PyGBag:
-Pygbag is a tool that enables the packaging of Python-based games developed with libraries like Pygame into a browser-playable format using WebAssembly. This allows games to run in a web browser without requiring users to install Python or additional dependencies. Pygbag provides an easy way to distribute Python games to a wide audience via the web.
-
-### Key Features of Pygbag:
-- Converts Python and Pygame applications into WebAssembly (WASM).
-- Generates HTML files that can be hosted on platforms like GitHub Pages or other web hosting services.
-- Allows for interactive debugging in the browser.
-- Ideal for showcasing games or applications to a broad audience without requiring installation.
+Welcome to **The Simulation Game Engine**, a versatile and ambitious project designed to simulate complex worlds with dynamic characters, procedural generation, and multiplayer functionality. This project is a work-in-progress, intended as both a learning journey and a foundation for future simulation games.
 
 ---
 
 ## Features
-- **Interactive Objects**: Dynamic objects with behaviors and animations.
-- **Animations**: Integrated animated sprites for enhanced visuals.
-- **Game Loop**: Core loop to manage updates, rendering, and user interaction.
-- **Modular Design**: Easily extendable and modular codebase.
+
+### Implemented Features:
+- **Dynamic Camera System**
+  - Multiple modes, including player tracking, free movement, and more.
+- **Basic NPC AI**
+  - NPCs with needs-based behavior (e.g., hunger, thirst, socializing).
+- **Debugging Tools**
+  - Sophisticated debugging system to track game variables in real-time.
+- **Multiplayer Support**
+  - Client-server architecture with socket-based communication.
+- **Procedural Generation**
+  - Foundation for creating dynamic, reusable levels.
+- **Time System**
+  - In-game day-night cycles and simulated passage of time.
+
+### Planned Features:
+- **Advanced Procedural Generation**
+  - Expand room creation and background variety.
+- **UI and Asset Management**
+  - Develop drag-and-drop systems for intuitive design.
+- **Customizable Characters**
+  - Enable detailed player and NPC customization.
+- **Enhanced Audio**
+  - Implement robust sound design and music integration.
+- **AI Pathfinding**
+  - Refine NPC navigation with smoother, more reliable mechanics.
+- **3D Elements**
+  - Explore adding 3D capabilities to the engine.
+- **Peripheral Support**
+  - Add support for devices like gamepads.
 
 ---
 
-## Requirements
+## How to Run
 
-### Python Version
-- Python 3.8 or higher
+### Prerequisites
+- Python >= 3.11
+- Install required dependencies using `pip`:
 
-### Dependencies
-- `pygame`
+```bash
+pip install pygame
+```
 
-Install dependencies via pip:
+### Running the Game
+1. Clone the repository:
 
-pip install pygame pygbag
+```bash
+git clone https://github.com/your-username/simulation-game-engine.git
+cd simulation-game-engine
+```
 
+2. Run the main script:
 
-## Usage
+```bash
+python main.py
+```
 
-### Running:
+---
 
-- PyGBag games can be run like any other PyGame.
+## Controls
 
-### Compiling to HTML5:
+### Camera Modes
+1. `1`: Player Focus
+2. `2`: Free Mouse
+3. `3`: Free Key
+4. `4`: Follow Target
 
-- Main application MUST be called "Main.py"
-- with PyGBag already installed, navigate to project directory "cd PATH_TO_PROJECT"
-- type "python -m pygbag --archive" to covert "main.py" to a html package (zip) which can be uploaded and played on Itch.io
+### Movement
+- **W/A/S/D** or Arrow Keys: Move the camera or character (based on the mode).
 
+### Debug Mode
+- **Ctrl** (Toggle): Enable/Disable Debug Mode.
 
-- https://github.com/pygame-web/pygbag   (More documanetation found here!)
+---
 
-### Customization
-- Modify game assets and settings in the respective sections of the code.
-- Add or enhance object behaviors by editing the object classes.
+## Contributing
+This project is a learning endeavor, and contributions are welcome! If you have ideas, suggestions, or code improvements, feel free to open an issue or submit a pull request.
+
+---
+
+## Roadmap
+- [x] Basic engine framework
+- [x] Dynamic camera and debug tools
+- [ ] Fully functional AI systems
+- [ ] Procedural level generation
+- [ ] Player and NPC customization
+- [ ] Polished UI and sound design
+
+---
+
+## Credits
+- **Created by**: Zak Morrison
+  - A labor of love, curiosity, and caffeine-fueled late nights.
+- **Special Thanks to**:
+  - The Python and Pygame communities for their excellent resources and support.
 
 ---
 
 ## License
-This project is licensed under the [MIT License](LICENSE).
+This project is licensed under the MIT License. See `LICENSE` for details.
 
 ---
 
-## Acknowledgments
-Special thanks to the `pygame` community for providing extensive documentation and examples to support game development.
+### Notes
+- **Work in Progress**
+  - This project will evolve over time. Bugs are expected (and occasionally welcomed as features).
+- **Feedback**
+  - Your feedback is greatly appreciated!
