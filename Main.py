@@ -62,15 +62,6 @@ Date_of_Release = "--/--/----"
 Contact = []
 Rating_Age = ""
 ##################################################
-### GAME MECHANICAL:
-##################################################
-dt = 0 # Delta Time/Step-Up Clock
-PAUSE = False
-current_room = 0
-room_width = 0
-room_height = 0
-temporal_measurements = datetime.datetime.now()
-##################################################
 ### GAME NETWORK:
 ##################################################
 Multiplayer = False
@@ -84,7 +75,7 @@ max_clients = 8
 online_host_address = ""
 online_host_port = ""
 ##################################################
-### GAME SCENES/ROOMS:
+### GAME SCENES/MAPS:
 ##################################################
 SPLASH = True # Splash Window
 MENU = False # Menu Window
@@ -92,13 +83,30 @@ ROOM = False # Room Placeholder
 ##################################################
 ### Room: ROOM_0. defintions: (Room #0)
 ##################################################
-room_ROOM_0_width = 1920
-room_ROOM_0_height = 1080
-Max_Entities = 50
-IN_GAME_TIME = "00:00"
+def room_0():
+   width = 1920
+   height = 1080
+   Max_Entities = 50
+   IN_GAME_TIME = "00:00"
+##################################################
+### Room: ROOM_1. defintions: (Room #1)
+##################################################
+def room_1():
+   width = 1920
+   height = 1080
+   Max_Entities = 20
+   IN_GAME_TIME = "00:00"
+##################################################
+### GAME MECHANICAL:
+##################################################
+dt = 0 # Delta Time/Step-Up Clock
+PAUSE = False
+game_levels = [room_0(),room_1()]
+current_room = game_levels[0]
+room_width = current_room.width
+room_height = current_room.height
+temporal_measurements = datetime.datetime.now()
 ################################################
-
-
 
 
 
