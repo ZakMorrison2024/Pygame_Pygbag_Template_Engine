@@ -45,6 +45,7 @@ BLUE = (0,0,255)
 # GAME:
 ################################################
 abs_cwd_path_ts = os.path.abspath(os.getcwd())
+width, height = 960, 540 # Default APR: 16:9 1.777, RESO DIMEN: 960 x 540 px (1920 x 1080 % 2), scale resolution by 2.
 ################################################
 
 ###################################################
@@ -80,6 +81,7 @@ online_host_port = ""
 SPLASH = True # Splash Window
 MENU = False # Menu Window
 ROOM = False # Room Placeholder
+# ... add more? ...
 ################################################
 ### Camera
 ################################################
@@ -109,6 +111,15 @@ camera = Camera(width,height)
 def room_0():
    width = 1920
    height = 1080
+   spawn_location_player = []
+   max_spawns = 6
+   enemy_spawn_local_width = width/max_spawns
+   enemy_spawn_local_height = height/max_spawns
+   no_of_spawn_points = 1
+   for no_of_spawn_point < max_spawns:
+      spawn_points_enemies[no_of_spawn_points] = [enemy_spawn_local_width*no_of_spawn_points,enemy_spawn_local_height*no_of_spawn_points]
+      no_of_spawn_points += 1
+      
    Max_Entities = 50
    IN_GAME_TIME = "00:00"
    Camera.set_room_size(width,height)
@@ -395,7 +406,6 @@ pygame.init()
 #pygame.mixer.init() # uncomment to use audio engine.
 
 # Pygame/Game intialisation
-width, height = 960, 540 # Default APR: 16:9 1.777, RESO DIMEN: 960 x 540 px (1920 x 1080 % 2), scale resolution by 2.
 screen = pygame.display.set_mode((width, height))
 pygame.display.set_caption("GAME_NAME") ## Change Game title name here
 clock = pygame.time.Clock()
