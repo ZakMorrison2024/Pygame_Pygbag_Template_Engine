@@ -9,7 +9,8 @@
 #   "math",
 #   "sys",
 #   "threading",
-#   "socket"
+#   "socket",
+#   "datetime"
 # ]
 # ///
 
@@ -24,6 +25,7 @@ import math
 import sys
 import socket
 import threading
+import datetime
 
 ###################################################
 ##################################################
@@ -424,9 +426,14 @@ def see_message(message):
 
 def multiplayer():
    if Client == True:
+      online_host_address = input("Type in IP of HOST")
+      online_host_port = input("Type in PORT of HOST")
+      if online_host_address, online_host_host != 0:
+         send_message(
 
    if Server == True:
       start_server()
+      print(My_IP)
 
 ##################################################
 ####################################################################################################
