@@ -456,23 +456,23 @@ asyncio.run(main()) ## run program
 #####################
 
 # Author:
-
+#   The name of the main developer or development team.
 # Co-Author:
-
+#   Names of any co-developers or collaborators involved in the project.
 # Company: 
-
+#   The name of the studio or company developing the game.
 # Title:
-
+#   The name of the game.
 # Genre:
-
+#   The genre of the game (e.g., RPG, Puzzle, Shooter, etc.).
 # Decription:
-
+#   A brief overview of the game, including its setting, story, and key gameplay elements.
 # Date of Release: 
-
+#   The planned release date of the game, or “TBA” if uncertain.
 # Contact:
-
+#   Contact information for business inquiries (e.g., email address).
 # Rating_Age:
-
+#   The appropriate age rating for the game (e.g., ESRB, PEGI).
 #####################
 ######################################################################################################################################################
 ######################################################################################################################################################
@@ -480,11 +480,13 @@ asyncio.run(main()) ## run program
 ### Product/Investors:
 #####################
 # USP:
+#   What makes your game stand out? A unique feature, story element, or innovative mechanic that sets it apart.
 # Slogan:
+#   A catchy phrase or tagline that summarizes the essence or key selling point of the game.
 # MVP: 
-
+#   The simplest version of the game with the core features that demonstrate its value. This could be a demo or early access version.
 # Pitch:
-
+#   A short, persuasive summary of why the game is worth investing in, highlighting what makes it unique and appealing.
 
 
 #####################
@@ -494,14 +496,15 @@ asyncio.run(main()) ## run program
 ### Market:
 #####################
 # Target_audiance:
+#   The demographic and player base the game is intended for (age, interests, gaming habits, etc.).
 
 
 # Recepetion:
+#   How you expect the game to be received by critics and players, including any potential challenges or expectations.
 
 
 # Marketing:
-
-
+#   The strategies you plan to use to market the game, such as trailers, social media, influencer partnerships, or events.
 
 
 
@@ -513,15 +516,16 @@ asyncio.run(main()) ## run program
 ### SWAT:
 #####################
 # Strengths:
-
+#   The key advantages or unique features of your game that set it apart from others (e.g., engaging mechanics, strong art direction, etc.).
 
 # Weaknesses:
-
+#   Any potential weaknesses or challenges the game might face (e.g., lack of funding, competition, technical limitations).
 
 # Advantages:
-
+#   The factors that give your game an edge over competitors or position it for success (e.g., innovative gameplay, niche audience).
 
 # Threats:
+#   External factors that might affect the game’s success (e.g., market saturation, other high-profile releases, shifting trends).
 
 
 #####################
