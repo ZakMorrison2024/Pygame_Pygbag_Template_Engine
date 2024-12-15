@@ -119,9 +119,15 @@ def room_0():
    for no_of_spawn_point < max_spawns:
       spawn_points_enemies[no_of_spawn_points] = [enemy_spawn_local_width*no_of_spawn_points,enemy_spawn_local_height*no_of_spawn_points]
       no_of_spawn_points += 1
-      
+
+   Current_Entities = 0
    Max_Entities = 50
-   IN_GAME_TIME = "00:00"
+   Total_Entities = 100
+   Entities_difficulty = 0.10
+   
+   if current_room = game_levels[0]:
+      IN_GAME_TIME += dt
+
    Camera.set_room_size(width,height)
 ##################################################
 ### Room: ROOM_1. defintions: (Room #1)
@@ -129,8 +135,23 @@ def room_0():
 def room_1():
    width = 1920
    height = 1080
-   Max_Entities = 20
-   IN_GAME_TIME = "00:00"
+   spawn_location_player = []
+   max_spawns = 8
+   enemy_spawn_local_width = width/max_spawns
+   enemy_spawn_local_height = height/max_spawns
+   no_of_spawn_points = 1
+   for no_of_spawn_point < max_spawns:
+      spawn_points_enemies[no_of_spawn_points] = [enemy_spawn_local_width*no_of_spawn_points,enemy_spawn_local_height*no_of_spawn_points]
+      no_of_spawn_points += 1
+
+   Current_Entities = 0
+   Max_Entities = 75
+   Total_Entities = 120
+   Entities_difficulty = 0.15
+
+   if current_room = game_levels[1]:
+      IN_GAME_TIME += dt
+
    Camera.set_room_size(width,height)
 ##################################################
 ### GAME MECHANICAL:
