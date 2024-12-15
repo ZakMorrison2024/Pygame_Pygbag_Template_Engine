@@ -10,7 +10,9 @@
 #   "sys",
 #   "threading",
 #   "socket",
-#   "datetime"
+#   "datetime",
+#   "select",
+#   "asyncio"
 # ]
 # ///
 #####################################################
@@ -25,6 +27,8 @@ import sys # System
 import socket # Sockets
 import threading # Multi-threading
 import datetime # date and time
+import select # select
+import asyncio # async
 ###################################################
 ##################################################
 # GLOBAL VARIABLES:
@@ -54,6 +58,8 @@ Rating_Age = "" # Age rating for game
 ##################################################
 abs_cwd_path_ts = os.path.abspath(os.getcwd()) # absolute working directory string
 width, height = 960, 540 # Default APR: 16:9 1.777, RESO DIMEN: 960 x 540 px (1920 x 1080 % 2), scale resolution by 2.
+FONT = pygame.font.Font(None, 36) # Font
+splash_trigger = False # trigger for splash screen
 ##################################################
 ### GAME NETWORK:
 ##################################################
@@ -67,6 +73,7 @@ Client = False # Client Mode
 max_clients = 8 # Max number of connections
 online_host_address = "" # Server IP address
 online_host_port = "" # Server PORT number
+logs = [] # logs for server
 ##################################################
 ### GAME SCENES/MAPS:
 ##################################################
@@ -105,41 +112,43 @@ class Camera: # Camera Class
         self.room_height = height # Set room height
 camera = Camera(width,height) # intiate camera, set resolusion to default game resolution
 ##################################################
-### Room: ROOM_0. defintions: (Room #0)
+### Room: ROOM_0. defintions: (Room/Level #0)
 ##################################################
 def room_0(): # Level_0
    width = 1920 # width dimention of level
    height = 1080 # height dimention of level
    max_spawns = 6 # max_number of spawns for NPCs
-   enemy_spawn_local_width = width/max_spawns # even of spawns for NPCs
-   enemy_spawn_local_height = height/max_spawns # even of spawns for NPCs
+   NPC_spawn_local_width = width/max_spawns # even of spawns for NPCs
+   NPC_spawn_local_height = height/max_spawns # even of spawns for NPCs
    no_of_spawn_points = 1 # spawns tally for NPCs
+   spawn_points_enemies = [] # NPC spawn points
    Current_Entities = 0 # Entities on screen/in map
    Max_Entities = 50 # Max Entities on map
    Total_Entities = 100 # Total Level Entities
    Entities_difficulty = 0.10 # Enemy difficulty multiplier
-   for no_of_spawn_point < max_spawns:
-      spawn_points_enemies[no_of_spawn_points] = [enemy_spawn_local_width*no_of_spawn_points,enemy_spawn_local_height*no_of_spawn_points] # Find locations of spawns for NPCs
+   if no_of_spawn_points < max_spawns:
+      spawn_points_enemies[no_of_spawn_points] = [(NPC_spawn_local_width*no_of_spawn_points),(NPC_spawn_local_height*no_of_spawn_points)] # Find locations of spawns for NPCs
       no_of_spawn_points += 1 # tally up
    if current_room == game_levels[0]:
       IN_GAME_TIME += dt # increase level timer
    Camera.set_room_size(width,height) # Set room dimensions with Camera
 ##################################################
-### Room: ROOM_1. defintions: (Room #1)
+### Room: ROOM_1. defintions: (Room/Level #1)
 ##################################################
 def room_1(): # Level_1
    width = 1920 # width dimention of level
    height = 1080 # height dimention of level
    max_spawns = 8 # max_number of spawns for NPCs
-   enemy_spawn_local_width = width/max_spawns # even of spawns for NPCs
-   enemy_spawn_local_height = height/max_spawns # even of spawns for NPCs
+   NPC_spawn_local_width = width/max_spawns # even of spawns for NPCs
+   NPC_spawn_local_height = height/max_spawns # even of spawns for NPCs
    no_of_spawn_points = 1 # spawns tally for NPCs
+   spawn_points_enemies = []  # NPC spawn points
    Current_Entities = 0 # Entities on screen/in map
    Max_Entities = 75 # Max Entities on map
    Total_Entities = 120 # Total Level Entities
    Entities_difficulty = 0.15 # Enemy difficulty multiplier
-   for no_of_spawn_point < max_spawns:
-      spawn_points_enemies[no_of_spawn_points] = [enemy_spawn_local_width*no_of_spawn_points,enemy_spawn_local_height*no_of_spawn_points] # Find locations of spawns for NPCs
+   if no_of_spawn_points < max_spawns:
+      spawn_points_enemies[no_of_spawn_points] = [(NPC_spawn_local_width*no_of_spawn_points),(NPC_spawn_local_height*no_of_spawn_points)] # Find locations of spawns for NPCs
       no_of_spawn_points += 1 # tally up
    if current_room == game_levels[1]:
       IN_GAME_TIME += dt # increase level timer
@@ -180,7 +189,7 @@ class Button_0(pygame.sprite.Sprite): ### Object Template
    def __init__(self, x, y, *groups): # Intialisation/defintions
       super().__init__(*groups) 
       ## Primary image placeholder:
-      self.img_org =[pygame.image.load(abs_cwd_path_ts+os.path.join("/imgs","####-INSERT_NAME_HERE-####.png")))]
+      self.img_org = pygame.image.load(abs_cwd_path_ts+os.path.join("/imgs","####-INSERT_NAME_HERE-####.png"))
       self.image = self.img_org # Set Default image
       self.rect = self.image.get_rect() # Set Colision Rectangle
       self.rect.x = x # Rect X
@@ -190,14 +199,14 @@ class Button_0(pygame.sprite.Sprite): ### Object Template
          if interacted == True: # if interacted
             MENU = False # menu finished
             ROOM = True # game room start
-            current_rooms = game_level[0] # game level
+            current_rooms = game_levels[0] # game level
             self.kill() # destory button
 ################### Button_1 # Multiplayer
 class Button_1(pygame.sprite.Sprite): ### Object Template
    def __init__(self, x, y, *groups): # Intialisation/defintions
       super().__init__(*groups) 
       ## Primary image placeholder:
-      self.img_org =[pygame.image.load(abs_cwd_path_ts+os.path.join("/imgs","####-INSERT_NAME_HERE-####.png")))]
+      self.img_org =pygame.image.load(abs_cwd_path_ts+os.path.join("/imgs","####-INSERT_NAME_HERE-####.png"))
       self.image = self.img_org # Set Default image
       self.rect = self.image.get_rect() # Set Colision Rectangle
       self.rect.x = x # Rect X
@@ -212,7 +221,7 @@ class Button_2(pygame.sprite.Sprite): ### Object Template
    def __init__(self, x, y, *groups): # Intialisation/defintions
       super().__init__(*groups) 
       ## Primary image placeholder:
-      self.img_org =[pygame.image.load(abs_cwd_path_ts+os.path.join("/imgs","####-INSERT_NAME_HERE-####.png")))]
+      self.img_org = pygame.image.load(abs_cwd_path_ts+os.path.join("/imgs","####-INSERT_NAME_HERE-####.png")) 
       self.image = self.img_org # Set Default image
       self.rect = self.image.get_rect() # Set Colision Rectangle
       self.rect.x = x # Rect X
@@ -227,7 +236,7 @@ class Button_3(pygame.sprite.Sprite): ### Object Template
    def __init__(self, x, y, *groups): # Intialisation/defintions
       super().__init__(*groups) 
       ## Primary image placeholder:
-      self.img_org =[pygame.image.load(abs_cwd_path_ts+os.path.join("/imgs","####-INSERT_NAME_HERE-####.png")))]
+      self.img_org = pygame.image.load(abs_cwd_path_ts+os.path.join("/imgs","####-INSERT_NAME_HERE-####.png")) 
       self.image = self.img_org # Set Default image
       self.rect = self.image.get_rect() # Set Colision Rectangle
       self.rect.x = x # Rect X
@@ -245,44 +254,32 @@ class Button_3(pygame.sprite.Sprite): ### Object Template
 class Object_0(pygame.sprite.Sprite): ### Object Template, showing features one can add to object to define the objects nature and interactions (Non-playable Character Ver.)
    def __init__(self, x, y, *groups): # Intialisation/defintions
       super().__init__(*groups) 
-      properities()
-      sprite()
-      definitives()
-
-   def sprite(self):   
       ## Primary image placeholder:
-      self.img_org =[pygame.image.load(abs_cwd_path_ts+os.path.join("/imgs","####-INSERT_NAME_HERE-####.png"))),    
-         abs_cwd_path_ts+os.path.join("/imgs","####-INSERT_NAME_HERE_2-####.png")))] # - List Placeholder for second (or more) images for animation # All With Pre-Defined PATH Variable
+      self.img_org = [pygame.image.load(abs_cwd_path_ts+os.path.join("/imgs","####-INSERT_NAME_HERE-####.png")),    
+         abs_cwd_path_ts+os.path.join("/imgs","####-INSERT_NAME_HERE_2-####.png")] # - List Placeholder for second (or more) images for animation # All With Pre-Defined PATH Variable
       ## Secondary image placeholders:
-      self.img_attack = [pygame.image.load(abs_cwd_path_ts+os.path.join("/imgs","####-ATTACK_0-####.png"))),    
-         abs_cwd_path_ts+os.path.join("/imgs","####-ATTACK_1-####.png"))),
-         abs_cwd_path_ts+os.path.join("/imgs","####-ATTACK_2-####.png")))]
+      self.img_attack = [pygame.image.load(abs_cwd_path_ts+os.path.join("/imgs","####-ATTACK_0-####.png")),    
+         abs_cwd_path_ts+os.path.join("/imgs","####-ATTACK_1-####.png"),
+         abs_cwd_path_ts+os.path.join("/imgs","####-ATTACK_2-####.png")]
      # Death:
-      self.image_death = pygame.image.load(abs_cwd_path_ts+os.path.join("/imgs","####-CORPSE-####.png")))
+      self.image_death = pygame.image.load(abs_cwd_path_ts+os.path.join("/imgs","####-CORPSE-####.png"))
      ## Image Loading: (init)
       self.image = self.img_org[0] # Set Default image
       self.img_pre_render = self.img_org[0]
-
       # Animation Mechanics 
       self.max_frames = len(self.img_pre_render)
       self.current_frame = 0 ## current frame for animation
       self.animation_time = 0.1 ## threshold for next frame (time)
       self.current_time = 0 ## current timing for animation
-   
-   def properities(self):  
      ## Object Boundaries/Collision:
       self.rect = self.image.get_rect()# Set Colision Rectangle
       self.rect.x = x # Rect X
       self.rect.y = y # Rect y
-      
-   def states(self):    
       # States:
       self.alert = False # whether the object is alerted
       self.moving = False # whether the object is moving
       self.attacking = False # whether the object is attacking
       self.dead = False # whether object is dead
-     
-  def definitives(self):
       # Locals
       self.target = 0 ## chasing this object or coordinate
       self.health = 100 # object life
@@ -294,27 +291,23 @@ class Object_0(pygame.sprite.Sprite): ### Object Template, showing features one 
       self.debuff = 2 # base draw back
       self.damage_calc = 0 # varaible for calculation
       # ... etc etc
-
-  def attack(self,target):
-         if self.target != 0:
-            if self.attacking == True:
-                 if self.current_frame = 3: # Placeholder number, edit for your needs.
-                      self.debuff = self.debuff + (self.debuff*self.target.damage) # increase debuff by targets attack
-                      self.damage_calc = self.damage/self.debuff # work out how much damage will be dealth during attack
-                      self.target.life -= self.damage_calc # deal said damage
-                    
-  def rotate(self):
+   def update(self, dt): # Main behaviour loop
+     ## Animation/Image_edit:
+     
+     self.image = self.img_pre_render
+          ## LIFE 
+     if self.health <= 0:
+           self.death = True
+     if self.death == False: # Check if Alive/Active
       # Make instance rotate around point (define point by px,py)
       px,py = self.target.x,self.target.y # center point of rotation
       rel_x, rel_y = round(px - self.rect.x), round(py - self.rect.y) # find difference between target and rect coordinates
       angle = round((180/math.pi)*+math.atan2(rel_x,rel_y)) # Trignometery for rotation
       self.image = pygame.transform.rotate(self.image_clean,angle) # rotate image
       self.rect = self.image.get_rect(center=self.rect.center) # set new boundary/collision_box
-
- def animation(self,dt):
-         if self.current_frame >= self.max_frame: # Animation Frame loop
+      if self.current_frame >= self.max_frame: # Animation Frame loop
           self.current_frame = 0 # reset current frame
-         if self.moving == True or self.attacking == True: # Animation Trigger
+          if self.moving == True or self.attacking == True: # Animation Trigger
             if self.moving == True :
                 self.img_pre_render = self.img_org # set image pre_render variable to orginal animation
             if self.attacking == True:
@@ -326,27 +319,17 @@ class Object_0(pygame.sprite.Sprite): ### Object Template, showing features one 
             else:
                self.current_time = 0 # reset
                self.current_frame = 0 # reset
-
- def kill(self):
-     ## LIFE 
-     if self.health <= 0:
-           self.death = True
-
-def update(self, dt): # Main behaviour loop
-     ## Animation/Image_edit:
-     self.image = self.img_pre_render
-     kill()  
-     if self.death == False: # Check if Alive/Active
-        rotate()     
-        animation()
-        attack(target)
      else:
        self.img_pre_render = self.img_death # Set to dead sprite
 
        ## Add more functionality Here:
        ## i.e.....:
-    
-      pass
+       if self.target != 0:
+            if self.attacking == True:
+                 if self.current_frame == 3: # Placeholder number, edit for your needs.
+                      self.debuff = self.debuff + (self.debuff*self.target.damage) # increase debuff by targets attack
+                      self.damage_calc = self.damage/self.debuff # work out how much damage will be dealth during attack
+                      self.target.life -= self.damage_calc # deal said damage
 ##################################################
 ##################################################
 ##################################################
@@ -354,19 +337,14 @@ def update(self, dt): # Main behaviour loop
 class Object_1(pygame.sprite.Sprite): ### Object Template, showing features one can add to object to define the objects nature and interactions (playable Character Ver.)
    def __init__(self, x, y, *groups): # Intialisation/defintions
       super().__init__(*groups)
-      properities()
-      sprite()
-      definitives()
-      
-   def sprite(self): 
       ## Primary image placeholder:
-      self.img_org =[pygame.image.load(abs_cwd_path_ts+os.path.join("/imgs","####-INSERT_NAME_HERE-####.png"))),    
-         abs_cwd_path_ts+os.path.join("/imgs","####-INSERT_NAME_HERE_2-####.png")))] # - List Placeholder for second (or more) images for animation # All With Pre-Defined PATH Variable
+      self.img_org =[pygame.image.load(abs_cwd_path_ts+os.path.join("/imgs","####-INSERT_NAME_HERE-####.png")),    
+         abs_cwd_path_ts+os.path.join("/imgs","####-INSERT_NAME_HERE_2-####.png")] # - List Placeholder for second (or more) images for animation # All With Pre-Defined PATH Variable
       ## Secondary image placeholders:
-      self.img_attack = [pygame.image.load(abs_cwd_path_ts+os.path.join("/imgs","####-ATTACK_0-####.png"))),    
-         abs_cwd_path_ts+os.path.join("/imgs","####-ATTACK_1-####.png"))),
-         abs_cwd_path_ts+os.path.join("/imgs","####-ATTACK_2-####.png")))]
-      self.image_death = pygame.image.load(abs_cwd_path_ts+os.path.join("/imgs","####-CORPSE-####.png")))
+      self.img_attack = [pygame.image.load(abs_cwd_path_ts+os.path.join("/imgs","####-ATTACK_0-####.png")),    
+         abs_cwd_path_ts+os.path.join("/imgs","####-ATTACK_1-####.png"),
+         abs_cwd_path_ts+os.path.join("/imgs","####-ATTACK_2-####.png")]
+      self.image_death = pygame.image.load(abs_cwd_path_ts+os.path.join("/imgs","####-CORPSE-####.png"))
       ## Image Loading: (init)
       self.image = self.img_org[0] # Set Default image
       self.img_pre_render = 0
@@ -375,21 +353,15 @@ class Object_1(pygame.sprite.Sprite): ### Object Template, showing features one 
       self.current_frame = 0 ## current frame for animation
       self.animation_time = 0.1 ## threshold for next frame (time)
       self.current_time = 0 ## current timing for animation
-
-   def properities(self): 
-     ## Object Boundaries/Collision:
+      ## Object Boundaries/Collision:
       self.rect = self.image.get_rect()# Set Colision Rectangle
       self.rect.x = x # Rect X
       self.rect.y = y # Rect y
-      
-   def states(self):   
       # States:
       self.alert = False # whether the object is alerted
       self.moving = False # whether the object is moving
       self.attacking = False # whether the object is attacking
       self.dead = False # whether object is dead
-      
-   def definitives(self):
       # Locals
       self.health = 100 # object life
       self.speed = 3 # object speed
@@ -400,75 +372,56 @@ class Object_1(pygame.sprite.Sprite): ### Object Template, showing features one 
       self.debuff = 2 # base draw back
       self.damage_calc = 0 # varaible for calculation
       # ... etc etc
-
-   def kill(self):
-      ## LIFE 
-      if self.health <= 0:
-         self.death = True ### dead!
-
-   def rotate(self):
-         # Make instance rotate around point (define point by px,py)
-           mx,my = = pygame.mouse.get_pos() # center point of mouse (assuming this game is a top-down or requires the player to face the mouse)
-           rel_x, rel_y = round(mx - self.rect.x), round(my - self.rect.y) # find difference between mouse and rect coordinates
-           angle = round((180/math.pi)*+math.atan2(rel_x,rel_y)) # Trignometery for rotation
-           self.image = pygame.transform.rotate(self.image_clean,angle) # rotate image
-           self.rect = self.image.get_rect(center=self.rect.center) # set new boundary
-
-   def attack(self,target):
-             if self.target != 0:
-            if self.attacking == True:
-                 if self.current_frame = 3: # Placeholder number, edit for your needs.
-                      self.debuff = self.debuff + (self.debuff*self.target.damage) # increase debuff by targets attack
-                      self.damage_calc = self.damage/self.debuff # work out how much damage will be dealth during attack
-                      self.target.life -= self.damage_calc # deal said damage
-
-
-   def animation(self,dt):
-                 if self.current_frame >= self.max_frame: # Animation Frame loop
-                self.current_frame = 0 # reset current frame
-           if self.moving == True or self.attacking == True: # Animation Trigger
-               if self.moving == True :
-                   self.img_pre_render = self.img_org # set image pre_render variable to orginal animation
-               if self.attacking == True:
-                   self.img_pre_render = self.img_attack # set image pre_render variable to attack animation
-           self.current_time += dt ## Increase animation time
-           if self.current_time >= self.animation_time:
-                self.current_time = 0 # timing for the animation
-                self.current_frame = (self.current_frame + 1) % len(self.img_pre_render) # increase animation step until at max frame
-           else:
-               self.current_time = 0 # reset
-               self.current_frame = 0 # reset
-
-   def key_controls(self):
-           keys = pygame.key.get_pressed()
-            if keys[pygame.K_w] or keys[pygame.K_UP]:
-                 if player.rect.y < room_height and player.rect.y > 0:
-                           self.rect.y -= 2 # move up
-           elif keys[pygame.K_d] or keys[pygame.K_RIGHT]:
-                 if player.rect.x < room_width and player.rect.x > 0:
-                           self.rect.x += 2 # move right
-           elif keys[pygame.K_a] or keys[pygame.K_LEFT]:
-                 if player.rect.x < room_width and player.rect.x > 0
-                           self.rect.x -= 2 # move left
-           elif keys[pygame.K_s] or keys[pygame.K_DOWN]:
-                 if player.rect.y < room_height and player.rect.y > 0:
-                           self.rect.y += 2 # move down
-      
    def update(self, dt): # Main behaviour loop
-         ## Animation/Image_edit:
+        ## Animation/Image_edit:
         self.image = self.img_pre_render # load pre-rendered sprite
-        kill()  
+        ## LIFE 
+        if self.health <= 0:
+          self.death = True ### dead!
         if self.death == False: # Check if Alive/Active
-        key_controls()
-        rotate()     
-        animation()
-        attack(target)
+            keys = pygame.key.get_pressed()
+            if keys[pygame.K_w] or keys[pygame.K_UP]:
+                 if self.rect.y < room_height and self.rect.y > 0:
+                           self.rect.y -= 2 # move up
+            if keys[pygame.K_d] or keys[pygame.K_RIGHT]:
+                 if self.rect.x < room_width and self.rect.x > 0:
+                           self.rect.x += 2 # move right
+            if keys[pygame.K_a] or keys[pygame.K_LEFT]:
+                 if self.rect.x < room_width and self.rect.x > 0:
+                           self.rect.x -= 2 # move left
+            if keys[pygame.K_s] or keys[pygame.K_DOWN]:
+                 if self.rect.y < room_height and self.rect.y > 0:
+                           self.rect.y += 2 # move down
+           # Make instance rotate around point (define point by px,py)
+            mx,my = pygame.mouse.get_pos() # center point of mouse (assuming this game is a top-down or requires the player to face the mouse)
+            rel_x, rel_y = round(mx - self.rect.x), round(my - self.rect.y) # find difference between mouse and rect coordinates
+            angle = round((180/math.pi)*+math.atan2(rel_x,rel_y)) # Trignometery for rotation
+            self.image = pygame.transform.rotate(self.image_clean,angle) # rotate image
+            self.rect = self.image.get_rect(center=self.rect.center) # set new boundary
+            if self.current_frame >= self.max_frame: # Animation Frame loop
+                self.current_frame = 0 # reset current frame
+                if self.moving == True or self.attacking == True: # Animation Trigger
+                     if self.moving == True :
+                         self.img_pre_render = self.img_org # set image pre_render variable to orginal animation
+                     if self.attacking == True:
+                         self.img_pre_render = self.img_attack # set image pre_render variable to attack animation
+                     self.current_time += dt ## Increase animation time
+                     if self.current_time >= self.animation_time:
+                         self.current_time = 0 # timing for the animation
+                         self.current_frame = (self.current_frame + 1) % len(self.img_pre_render) # increase animation step until at max frame
+                     else:
+                          self.current_time = 0 # reset
+                          self.current_frame = 0 # reset
         else:
                self.img_pre_render = self.img_death # Set to dead sprite
        ## Add more functionality Here:
        ## i.e..........:
-
-        pass
+        if self.target != 0:
+            if self.attacking == True:
+                 if self.current_frame == 3: # Placeholder number, edit for your needs.
+                      self.debuff = self.debuff + (self.debuff*self.target.damage) # increase debuff by targets attack
+                      self.damage_calc = self.damage/self.debuff # work out how much damage will be dealth during attack
+                      self.target.life -= self.damage_calc # deal said damage
 ##################################################
 ##################################################
 ##################################################
@@ -496,36 +449,20 @@ running = True # game running
    ##################################################
    # Server:
    ##################################################
-def check_client_timeout(client_socket): # Test for time out
-       try:
-         for client in log.keys(): # if client in logs
-          client_socket.send(b"PING") # ping them
-        return True # if good, leave to enjoy game
-    except socket.error:
-         client_socket.close() # else close connection
-        return False
- #####################
-def start_client_timer(dt,duration,clinet_socket):
-   if dt > duration: # if delta time greater than timer
-      check_client_timeout(client_socket) # probe user
  #####################
 def handle_client(client_socket, client_address, client_message, dt):
    message = client_socket.recv(1024).decode() # recieved 1024 bit socket/buffer
    client[client_address].start_client_timer(dt+120, client_socket) # reset users in-activity timer
    print(f"Player {client_address} said: {message}") # print message
-   log[client_address].append(message) # add to logs
-   tot_log = len(list(log.keys())) # find total logs size
+   logs[client_address].append(message) # add to logs
+   tot_log = len(list(logs.keys())) # find total logs size
    if tot_log > 0: # if logs greater than nothing
-      key_value_log = log[list(log.keys())[tot_log]] # use latest log
+      key_value_log = logs[list(logs.keys())[tot_log]] # use latest log
    else:
-      key_value_log = log[list(log.keys())[0]] # else use the 0th one
+      key_value_log = logs[list(logs.keys())[0]] # else use the 0th one
 # Send result back to all players
-   for client in log.keys():
+   for client in logs.keys():
       client_socket.send(key_value_log.encode()) # Send data to other clients
-   except Exception as e:
-        print(f"Error: {e}")
-     finally:
-        client_socket.close() # close socket
  #####################
 def start_server():
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM) # establish connection
@@ -533,14 +470,25 @@ def start_server():
     print(My_IP +":"+ PORT)  # print it 
     server.listen(max_clients) # start server
     print("Server listening on port: " +str(PORT)) # ping port
-      log = {} # create server log
     while True:
         client_socket, client_address = server.accept() # if joined
         print(f"Player connected from {client_address}") # establish connection
         client_socket.setblocking(0) # turn off blocking
-        threading.Thread(target=handle_client, args=(client_socket, client_address, client_message)).start() # thread for game
+        threading.Thread(target=handle_client, args=(client_socket, client_address, logs)).start() # thread for game
         pass
+ #####################
+def start_client_timer(dt,duration,client_socket):
+   if dt > duration: # if delta time greater than timer
+      check_client_timeout(client_socket) # probe user
 #####################
+def check_client_timeout(client_socket): # Test for time out
+      try:
+         for client in logs.keys(): # if client in logs
+          client_socket.send(b"PING") # ping them
+          return True # if good, leave to enjoy game
+      except socket.error:
+         client_socket.close() # else close connection
+         return False
    ##################################################
    # Client:
    ##################################################
@@ -549,11 +497,10 @@ def send_message(message):
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s: # Establish a connection
             s.setblocking(0) # stop blocking sockets
             s.connect((online_host_address, online_host_port)) # connect to host
-            if s:
-               readable, writable, errored = select.select([], [s], [], 0) # find writable buffer
-               if writable:
-               s.send(message.encode()) # send message
-               print("message sent!")
+            readable, writable, errored = select.select([], [s], [], 0) # find writable buffer
+            if writable:
+                s.send(message.encode()) # send message
+                print("message sent!")
             try:
                data = s.recv(1024) # recieved 1024 bit data buffer
                if data: # if data
@@ -561,15 +508,13 @@ def send_message(message):
                   return print("message recieved!")
                else:
                    print("No data received.")
-                except BlockingIOError:
+            except BlockingIOError:
                  s.setblocking(0) # turn off block if on
                  print("No data available (BlockingIOError).")
-                except Exception as e:
+            except Exception as e:
                  print(f"An error occurred: {e}")
-                   pass
-       except Exception as e:
+    except Exception as e:
          print (f"Error: Unable to connect to server. {e}")
-                  pass # error handling
  #####################
 def recv_message(message): # recieved message
     try:
@@ -577,14 +522,13 @@ def recv_message(message): # recieved message
             s.setblocking(0) # stop blocking sockets
             readable, writable, errored = select.select([s], [], [], 0) # is readable buffer
             if readable:
-            recv_message = s.recv(1024).decode() # read message
-            return see_message(recv_message) # read message
+                recv_message = s.recv(1024).decode() # read message
+                return see_message(recv_message) # read message
     except Exception as e:
        send_message(My_IP +" | "+ temporal_measurements +" : "+"404, Didn't get last message.")
        return "Error: Unable to recieve data from server."
     except BlockingIOError:
        s.setblocking(0)# stop blocking
-       pass
  #####################
    ##################################################
    # Client and Server:
@@ -598,8 +542,9 @@ def multiplayer(): # multiplayer option
    if Client == True: # if client true
       online_host_address = input("Type in IP of HOST") # ask for ip
       online_host_port = input("Type in PORT of HOST") # ask for port
-      if online_host_address, online_host_host: # if successful
-         send_message(My_IP +" | "+ temporal_measurements +" : "+"I have connected! Thanks for having me.") # connect
+      if online_host_address:
+        if online_host_port: # if successful
+            send_message(My_IP +" | "+ temporal_measurements +" : "+"I have connected! Thanks for having me.") # connect
 ################### Server_side
    if Server == True: # if server
       PORT = input("Please pick a port number i.e. 8080 or 5050") # ask for port
@@ -652,7 +597,7 @@ fingers = [] # Touch Register
 ##################################################
 async def main(): # Start of game loop
     #Globals (to reach inside game loop):
-    global dt # delta time
+    global dt, interacted  # Globals
    ##################################################
     #Event System/Control System:
    ##################################################
@@ -686,10 +631,11 @@ async def main(): # Start of game loop
 ##################################################
 ##### Scene Hyirachy:
 ##################################################
+    
     if SPLASH == True: # Splash scene for Branding
        screen.blit(Company_branding,(0,0)) # Small image for publicity 
        Splash.draw(screen) # Draw splash
-       if splash_trigger = False: # if trigger activated
+       if splash_trigger == False: # if trigger activated
            timer = dt + 30   # set timer
            splash_tigger = True # cancel trigger
        if dt > timer: # if timer runs out
@@ -710,30 +656,30 @@ async def main(): # Start of game loop
        obj_Player = Object_1(0,0,Player_control) # Player_object
        NPC_MULTI = [] # Registrat for NPCs
        if current_room == game_levels[0]: # if level one
-           for Current_Entities < Max_Entities and i < Total_Entities: # if there currently less NPC in view and less than the total in the map
+           if Current_Entities < current_room.Max_Entities and i < current_room.Total_Entities: # if there currently less NPC in view and less than the total in the map
              # Multi-Spawner
                i += 1 # increade by one
                Current_Entities += 1 # increase by one
-               NPC_MULTI.append(Object_0(rand_random(room_ROOM_width),rand_random(room_ROOM_width),Enemy)) ## add enemy/NPC
-           elif i == Total_Enitites or i > Total_Entities:
+               NPC_MULTI.append(Object_0(round(random.random(current_room.room_ROOM_width)),round(random.random(current_room.room_ROOM_height)),Enemy)) ## add enemy/NPC
+           if i == current_room.Total_Entities or i > current_room.Total_Entities:
                   current_room = game_levels[1] 
                   i = 0
            screen.blit(Player_control,room_width/2,room_height/2) # Render Player
-           screen.blit(Enemy,spawn_points_enemies[rand.randomint(no_of_spawn_points)].x,spawn_points_enemies[rand.randomint(no_of_spawn_points)].y) # Render Multi-spawned NPCs
+           screen.blit(Enemy,current_room.spawn_points_enemies[round(random.random(current_room.no_of_spawn_points))].x,current_room.spawn_points_enemies[round(random.random(current_room.no_of_spawn_points))].y) # Render Multi-spawned NPCs
            Enemy.draw(screen) # Draw Enemy
            Player_control.draw(screen) # Draw Player
            # ...
        if current_room == game_levels[1]:
-           for Current_Entities < Max_Entities and i < Total_Entities: # if there currently less NPC in view and less than the total in the map
+           if Current_Entities < current_room.Max_Entities and i < current_room.Total_Entities: # if there currently less NPC in view and less than the total in the map
              # Multi-Spawner
                i += 1 # increade by one
                Current_Entities += 1 # increase by one
-               NPC_MULTI.append(Object_0(rand_random(room_ROOM_width),rand_random(room_ROOM_width),Enemy)) ## add enemy/NPC
-           elif i == Total_Enitites or i > Total_Entities:
+               NPC_MULTI.append(Object_0(round(random.random(current_room.room_ROOM_width)),round(random.random(current_room.room_ROOM_height)),Enemy)) ## add enemy/NPC
+           if i == current_room.Total_Entities or i > current_room.Total_Entities:
                   current_room = game_levels[2]
                   i = 0
            screen.blit(obj_Player,room_width/2,room_height/2) # Render Player
-           screen.blit(NPC_MULTI,spawn_points_enemies[rand.randomint(no_of_spawn_points)].x,spawn_points_enemies[rand.randomint(no_of_spawn_points)].y) # Render Multi-spawned NPCs
+           screen.blit(NPC_MULTI,current_room.spawn_points_enemies[round(random.random(current_room.no_of_spawn_points))].x,current_room.spawn_points_enemies[round(random.random(current_room.no_of_spawn_points))].y) # Render Multi-spawned NPCs
            Enemy.draw(screen) # Draw Enemy
            Player_control.draw(screen) # Draw Player
     pass # Main game room
