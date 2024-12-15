@@ -45,7 +45,7 @@ abs_cwd_path_ts = os.path.abspath(os.getcwd())
 ### GAME DESCRIPTIVE:
 ##################################################
 Author = ""
-Co-Author = []
+Co_Author = []
 Company = ""
 Title = ""
 Genre = ""
