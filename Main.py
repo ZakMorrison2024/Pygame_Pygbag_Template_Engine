@@ -329,6 +329,8 @@ class Object_1(pygame.sprite.Sprite): ### Object Template, showing features one 
 
 # Initialize Pygame
 pygame.init()
+#pygame.mixer.init() # uncomment to use audio engine.
+
 # Pygame/Game intialisation
 width, height = 960, 540 # Default APR: 16:9 1.777, RESO DIMEN: 960 x 540 px (1920 x 1080 % 2), scale resolution by 2.
 screen = pygame.display.set_mode((width, height))
@@ -357,7 +359,24 @@ if i < Max_Entities:
 
 ####################################################################################################
 ####################################################################################################
+#Audio intialisation (PyGBag has some issues with audio, placeholders from a game I made but you get the point!)
+####################################################################################################
+####################################################################################################
 
+#ouch = pygame.mixer.Sound(os.path.abspath(os.getcwd()+os.path.join("/SFX"+"/SFX_Player_Hurt.mp3")))
+#bang = pygame.mixer.Sound(os.path.abspath(os.getcwd()+os.path.join("/SFX"+"/SFX_Pistol.mp3")))                                        
+#shotgun =  pygame.mixer.Sound(os.path.abspath(os.getcwd()+os.path.join("/SFX"+"/SFX_Shotgun.mp3")))    
+#overkill =  pygame.mixer.Sound(os.path.abspath(os.getcwd()+os.path.join("/SFX"+"/SFX_Overkill.mp3")))    
+#rampage =  pygame.mixer.Sound(os.path.abspath(os.getcwd()+os.path.join("/SFX"+"/SFX_Rampage.mp3")))    
+#melee =  pygame.mixer.Sound(os.path.abspath(os.getcwd()+os.path.join("/SFX"+"/SFX_Melee_Grunt.mp3")))    
+#death_enemy =  pygame.mixer.Sound(os.path.abspath(os.getcwd()+os.path.join("/SFX"+"/SFX_Death_Entities.mp3")))    
+#dkill =  pygame.mixer.Sound(os.path.abspath(os.getcwd()+os.path.join("/SFX"+"/SFX_DoubleKill.mp3")))    
+
+#pygame.mixer.music.load(os.path.abspath(os.getcwd()+os.path.join("/SFX"+"/MSC_Infraction_AI.mp3")))
+#pygame.mixer.music.play()     
+
+####################################################################################################
+####################################################################################################
 
 ## For device touch mechaninics:
 #fingers = [] # Touch Register
