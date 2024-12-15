@@ -79,11 +79,11 @@ def draw_debug_info(surface, info_dict, x=10, y=10, line_height=20):
         text_surface = font.render(p, True, GREEN)
         surface.blit(text_surface, (x, y + p * line_height))
         selection = input("Please write the menu you wish to see.")
-        if selection == Object_0:
+        if selection == Object_0 or selection == Object_1:
             num = input("Type the number of the instance you want to view.")   
             for i, (key, value) in enumerate(selection[num].items()):
              text = f"{key}: {value}"
-        if selection != Object_0:
+        if selection != Object_0 or selection != Object_1:
             for i, (key, value) in enumerate(selection.items()):
              text = f"{key}: {value}"
         text_surface = font.render(text, True, GREEN)
@@ -126,6 +126,7 @@ day_length = 20
 hour_len = 60
 hours_past = random.random(20)
 date = 0
+year = 0
 year_length = 90
 night_True_day_False = False
 # In-game time mechanism:
@@ -139,6 +140,7 @@ if ROOM == True:
         night_True_day_False = False
     if date > year_length:
         date = 0
+        year += 1
 ##################################################
 ### GAME NETWORK:
 ##################################################
@@ -374,6 +376,18 @@ room_height = current_room[2] # Change Room Dimension
 temporal_measurements = datetime.datetime.now() # Find Date
 splash_trigger = False # Splash trigger
 ##################################################
+### collision testing:
+##################################################
+def check_collision(rect1, rect2):
+    x1, y1, w1, h1 = rect1
+    x2, y2, w2, h2 = rect2
+    horizontal_overlap = x1 < x2 + w2 and x1 + w1 > x2
+    vertical_overlap = y1 < y2 + h2 and y1 + h1 > y2
+    if horizontal_overlap or vertical_overlap:
+     return True
+    else:
+     return False
+##################################################
 ## BRANDING:
 ##################################################
 ### GAME SPLASH SCREEN OBJECT:
@@ -517,11 +531,11 @@ class Object_0(pygame.sprite.Sprite): ### Object Template, showing features one 
       self.sex = random.random (100) # loneiness
       self.sleep = random.random(100) # sleepy
       # Locals:
+      self.needs = []
       self.task = ""
       self.hand_left = "Empty" # left hand item
       self.hand_right = "Empty" # right hand item
       self.carry_threat_value = 0 # determine how much a threat someone is by what they're holding
-      self.target = 0 # Player target
       self.speed = 3 # object speed
       self.value = random.random(2000) # object market value
       self.inventory = [] # object invetory
@@ -530,6 +544,7 @@ class Object_0(pygame.sprite.Sprite): ### Object Template, showing features one 
       self.debuff = 2 # base draw back
       self.damage_calc = 0 # varaible for calculation
       self.mutations = [] # potential mutations
+      self.history = [] # journal
       # Psychological
       self.mood = "Sad"
       self.brain_state = "Healthy"
@@ -563,20 +578,173 @@ class Object_0(pygame.sprite.Sprite): ### Object Template, showing features one 
       self.brain = 100 # brain vital
       self.liver = 100 # liver
       self.kidneys = 100 # kidneys
+      self.stanima = random.random(1)
       # Pathfinding
-   def pathfinding(self,start, goal):
-       self.start = start
-       self.goal = goal
-       self.path = 0
-       self.obstacles = []
-       ##
-   def destination(self,tx,ty,grid):    
-       pass
-   
-   def GOAT(self):
-       self.objective = ""
-       pass
-       ##
+   def pathfinding(self,goal):
+       self.start = self.rect.x, self.rect.y
+       self.goal = goal.x, goal.y
+       self.distance = math.sqrt((self.goal.x - self.rect.x)**2 + (self.goal.y - self.rect.y)**2)
+       self.nodes = []
+
+       if self.right_leg > 50 and self.left_leg > 50: 
+            self.ability = random.randrange(self.stanima,random.random(1))
+       elif self.right_leg < 50 or self.left_leg < 50:
+           self.ability = random.randrange(random.random(1),self.stanima) 
+       elif self.right_leg < 5 or self.left_leg < 5:
+           self.ability = 0.01 
+
+       self.max_distance_to_goal = self.distance*self.ability
+       planning = self.place_nodes(self.max_distance_to_goal,self.goal.x,self.goal.y)
+       if planning == True:
+           self.goal.used = True
+           self.goal = None
+   def place_nodes(self,distance,tx,ty):
+       distance = distance
+       tx = tx
+       ty = ty
+       if len(self.nodes) < 1:
+         if distance > 30:  
+              direction = self.goal - self.rect  # Vector from source to destination
+              magnitude = direction.length()  # Magnitude of the vector
+              if magnitude != 0:
+                 direction = direction.normalize()  # Normalize the vecto
+              dx = self.max_distance_to_goal * math.cos(math.radians(direction))
+              dy = self.max_distance_to_goal * math.sin(math.radians(direction))
+              self.nodes.append(self.path_builder(self,dx,dy,direction))
+              new_distance = math.sqrt((self.nodes.x - self.rect.x)**2 + (self.nodes.y - self.rect.y)**2)
+              if self.nodes.x > self.rect.x:
+                self.rect.x + self.speed
+              if self.nodes.x < self.rect.x:
+                self.rect.x - self.speed
+              if self.nodes.y > self.rect.y:
+                self.rect.y + self.speed
+              if self.nodes.y < self.rect.y:
+                 self.rect.y - self.speed
+
+              if new_distance < 30:
+                self.nodes.pop()
+                self.full_distance = math.sqrt((self.goal.x - self.rect.x)**2 + (self.goal.y - self.rect.y)**2)
+                distance = self.full_distance*self.ability
+                displacement = self.full_distance - distance
+                if self.full_distance > displacement:
+                   self.place_nodes(distance,self.goal.x,self.goal.y)
+                else:
+                    return True
+         else:
+             return True
+   def path_builder(self,tx,ty,direction): #path builder   
+       pygame.draw.ellipse(screen, RED, tx,ty, width=5)
+   def GOAT(self): # needs/tasks organisation
+    if self.needs:
+       if self.needs[len(self.needs)] == "hunger":
+           a= 0
+           self.mind_activity = "Hmmm, I really need food."
+           self.lookingfor = "Food"
+           for a in list_of_all_objects:
+             if a.purpose == "Food":
+                 self.task = "Looking for "+a.name+" too eat."
+                 self.objective = a
+                 self.goal = self.objective
+                 self.goal.x = a.x
+                 self.goal.y = a.y
+
+       if self.needs[len(self.needs)] == "thirst":
+           a= 0
+           self.mind_activity = "Hmmm, I really need a drink."
+           self.lookingfor = "Drink"
+           for a in list_of_all_objects:
+             if a.purpose == "Drink":
+                 self.task = "Looking for "+a.name+" too drink."
+                 self.objective = a
+                 self.goal = self.objective
+                 self.goal.x = a.x
+                 self.goal.y = a.y
+        
+       if self.needs[len(self.needs)] == "toilet":
+           a= 0
+           self.mind_activity = "Man, I'm bursting to go!"
+           self.lookingfor = "Toilet"
+           for a in list_of_all_objects:
+             if a.purpose == "Toilet":
+                 self.task = "Looking for "+a.name+" too drop off some waste...."
+                 self.objective = a
+                 self.goal = self.objective
+                 self.goal.x = a.x
+                 self.goal.y = a.y
+        
+       if self.needs[len(self.needs)] == "hygiene":
+           a= 0
+           self.mind_activity = "Something smells bad, I think it's me!"
+           self.lookingfor = "Hygiene"
+           for a in list_of_all_objects:
+             if a.purpose == "Hygiene":
+                 self.task = "I need a shower!"
+                 self.objective = a
+                 self.goal = self.objective
+                 self.goal.x = a.x
+                 self.goal.y = a.y
+
+       if self.needs[len(self.needs)] == "social":
+           a= 0
+           self.mind_activity = "So bored...."
+           self.lookingfor = "Social"
+           for a in list_of_all_objects:
+             if a.purpose == "Social":
+                 self.task = "Looking for a friend."
+                 self.objective = a
+                 self.goal = self.objective
+                 self.goal.x = a.x
+                 self.goal.y = a.y
+     
+       if self.needs[len(self.needs)] == "sleep":
+           a= 0
+           self.mind_activity = "So bored...."
+           self.lookingfor = "Sleep"
+           for a in list_of_all_objects:
+             if a.purpose == "Sleep":
+                 self.task = "going too: 'zZzZzZz!'"
+                 self.objective = a
+                 self.goal = self.objective
+                 self.goal.x = a.x
+                 self.goal.y = a.y
+
+       if self.objective != 0:
+          self.pathfinding(self,self.objective)
+       
+       if check_collision(self.rect,self.goal|self.objective):
+           if self.needs == self.objective.benefit:
+               if self.objective.benefit == "Food" or "Drink":
+                   self.history += "Log: Date: (yy/dd) | "+str(year)+" | "+ str(date)+ " | Time: "+ str(hours_past) + ":  I had a " +str(self.objective.name)+", it felt refreshing."
+                   self.objective.destroy = True
+               if self.objective.benefit == "Toilet":
+                   self.history += "Log: Date: (yy/dd) | "+str(year)+" | "+ str(date)+ " | Time: "+ str(hours_past) + ":  I had a whizz." 
+               if self.objective.benefit == "Hygiene":
+                   self.history += "Log: Date: (yy/dd) | "+str(year)+" | "+ str(date)+ " | Time: "+ str(hours_past) + ":  Man, I smelt so bad 10 minuites ago, thank you shower!" 
+               if self.objective.benefit == "Social":
+                   if actors[a.name] == a.name:
+                       if self.mood > 5:
+                          self.satisfaction += 1
+                       else:
+                          self.satisfaction -= 1   
+                       if self.personality > 5:
+                            self.satisfaction += 1
+                       else:
+                           self.satisfaction -= 1    
+                       if self.emotions > 5:
+                             self.satisfaction += 1
+                       else:
+                           self.satisfaction -= 1 
+                       if self.satisfaction > 5:
+                           self.history += "Log: Date: (yy/dd) | "+str(year)+" | "+ str(date)+ " | Time: "+ str(hours_past) + ":  I had a wounderful time!!"    
+                       else:
+                           self.history += "Log: Date: (yy/dd) | "+str(year)+" | "+ str(date)+ " | Time: "+ str(hours_past) + ":  Man, I have no friends ..." 
+               if self.objective.benefit == "Sleep":       
+                           self.history += "Log: Date: (yy/dd) | "+str(year)+" | "+ str(date)+ " | Time: "+ str(hours_past) + ":  'zZzZzZzZzZzZzZzZz'!!" 
+               self.needs.pop(self.objective.benefit)
+               self.objective = 0
+               
+
+
    def update(self, dt): # Main behaviour loop
      ## Drains/needs:
      if dt % 2:
@@ -589,11 +757,28 @@ class Object_0(pygame.sprite.Sprite): ### Object Template, showing features one 
         self.sleep -= random.random(2)
      if night_True_day_False == True:
         self.sleep -= random.random(6)
+
+        if self.hunger < 50:
+            self.needs.append("hunger")
+        if self.thirst < 40:
+            self.needs.append("thirst")
+        if self.toilet <20:
+            self.needs.append("toilet")
+        if self.hygiene < 10:
+            self.needs.append("hygiene")
+        if self.social < 10:
+            self.needs.append("social") 
+        if self.sleep < 30 or night_True_day_False == True:
+            self.needs.append("sleep")          
+
+
+
      ## Animation/Image_edit:
      self.image = self.img_pre_render
           ## LIFE 
      if self.health <= 0:
            self.death = True
+           actors.pop(self)
      if self.death == False: # Check if Alive/Active
       # Make instance rotate around point (define point by px,py)
       px,py = self.target.x,self.target.y # center point of rotation
@@ -632,6 +817,8 @@ class Object_0(pygame.sprite.Sprite): ### Object Template, showing features one 
 class Object_1(pygame.sprite.Sprite): ### Object Template, showing features one can add to object to define the objects nature and interactions (playable Character Ver.)
    def __init__(self, x, y, *groups): # Intialisation/defintions
       super().__init__(*groups)
+      actors.append(self) # add Player to actors
+      list_of_all_objects.append(self) # add Player to list of all objects
       ## Primary image placeholder:
       self.img_org =[pygame.image.load(abs_cwd_path_ts+os.path.join("/imgs","####-INSERT_NAME_HERE-####.png")),    
          abs_cwd_path_ts+os.path.join("/imgs","####-INSERT_NAME_HERE_2-####.png")] # - List Placeholder for second (or more) images for animation # All With Pre-Defined PATH Variable
@@ -898,6 +1085,7 @@ def see_message(message): ## see new message
 def multiplayer(): # multiplayer option
 ################### Client_side
    if Client == True: # if client true
+      player_name = input("Please type in your name.")
       online_host_address = input("Type in IP of HOST") # ask for ip
       online_host_port = input("Type in PORT of HOST") # ask for port
       if online_host_address:
@@ -905,6 +1093,7 @@ def multiplayer(): # multiplayer option
             send_message(My_IP +" | "+ temporal_measurements +" : "+"| 200: I have connected! Thanks for having me.") # connect
 ################### Server_side
    if Server == True: # if server
+      player_name = input("Please type in your name.")
       PORT = input("Please pick a port number i.e. 8080 or 5050, etc etc...") # ask for port
       start_server() # start_server
       print(My_IP) # show IP
@@ -990,7 +1179,8 @@ async def main(): # Start of game loop
 ##################################################
    # Debug display
     if DEBUG_MODE:
-     debug_info = [debug_NPC,debug_PLAYER,debug_GAME,debug_ROOM,debug_CAMERA,debug_Multiplayer,debug_Audio,debug_NARRATOR,debug_GAMEINFO]
+     debug_info = [debug_NPC[0], debug_PLAYER[0], debug_GAME, debug_ROOM, debug_CAMERA, debug_Multiplayer, debug_Audio, debug_NARRATOR, debug_GAMEINFO]
+     draw_debug_info(screen, debug_info)
      NPC = Object_0
      Player = Object_1
      Narra = Narrator
@@ -1183,7 +1373,7 @@ async def main(): # Start of game loop
                 "Animation Threshold Time :", NPC.animation_time,
                 "Current Animation Step: ", NPC.current_time ]
      
-     
+
      
      debug_PLAYER = [
                
@@ -1284,20 +1474,10 @@ async def main(): # Start of game loop
                 "rect_y : ", Player.rect.y,
                 "Collided: ", 
  ]          
-  
-     
-       
-    
-   
-
-    draw_debug_info(screen, debug_info)
-
-
-
 ##################################################
 ##################################################
 ##################################################
-##### Scene Hyirachy:
+##### Scene Hyirachy:############################
 ##################################################
     if SPLASH == True: # Splash scene for Branding
        screen.blit(Company_branding,(0,0)) # Small image for publicity 
@@ -1328,6 +1508,8 @@ async def main(): # Start of game loop
                i += 1 # increade by one
                Current_Entities += 1 # increase by one
                NPC_MULTI.append(Object_0(round(random.random(current_room.room_ROOM_width)),round(random.random(current_room.room_ROOM_height)),Enemy)) ## add enemy/NPC
+               actors.append(NPC_MULTI[len(NPC_MULTI)]) # add NPC to actors
+               list_of_all_objects.append(NPC_MULTI[len(NPC_MULTI)]) # add NPC to list of all objects
            if i == current_room.Total_Entities or i > current_room.Total_Entities:
                   current_room = game_levels[1] 
                   i = 0
@@ -1462,4 +1644,4 @@ asyncio.run(main()) ## run program
 #####################
 ######################################################################################################################################################
 ######################################################################################################################################################
-######################################################################################################################################################
+######################################################################################################################################################Z
