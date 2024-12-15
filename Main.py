@@ -66,6 +66,7 @@ Rating_Age = ""
 ##################################################
 dt = 0 # Delta Time/Step-Up Clock
 PAUSE = False
+temporal_measurements = datetime.datetime.now()
 ##################################################
 ### GAME NETWORK:
 ##################################################
@@ -429,7 +430,7 @@ def multiplayer():
       online_host_address = input("Type in IP of HOST")
       online_host_port = input("Type in PORT of HOST")
       if online_host_address, online_host_host != 0:
-         send_message(
+         send_message(My_IP +" | "+ temporal_measurements +" : "+"I have connected! Thanks for having me.")
 
    if Server == True:
       start_server()
