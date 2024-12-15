@@ -26,23 +26,23 @@
 ##################################################
 ## Features:
 
-# Coder/Business model review system
-# Dynamic Camera/View System
-# Command and talk based M-Network system (Multiplayer)
+# Coder/Business model review system (done)
+# Dynamic Camera/View System (done)
+# Command and talk based M-Network system (Multiplayer) (half way there)
 # Procedual Room Generation - World builder/background generation? (to implament)
 # Sound/Audio system (to implament)
 # Character customisation (to implament)
-# G.O.A.T NPC AI (to implament)
-# Basic Pathfinding (to implament)
+# G.O.A.T NPC AI (done but can be improved)
+# Basic Pathfinding (done)
 # Game UI (to implament)
 # Engine UI and drag and drop (to implament)
 # Asset management (to implament)
 # GPT/ML features? (to implament)
 # 3D engine? (to implament)
 # added peripherials (xbox gamepad) (to impliment)
-# Actors needs (to implemnt)
+# Actors needs (done)
 
-# Sophisticated Debug System! 
+# Sophisticated Debug System! (DONE!)
 
 #####################################################
 ## Libraries:
@@ -124,14 +124,14 @@ list_of_all_objects = [] # catalog of all active item, objects, actors and entit
 ## In-game time:
 day_length = 20
 hour_len = 60
-hours_past = random.random(20)
-date = 0
-year = 0
+hours_past = random.randint(19)
+date = random.randint(99)
+year = random.randint(99999)
 year_length = 90
 night_True_day_False = False
 # In-game time mechanism:
 if ROOM == True:
-    if hours_past > day_length:
+    if hours_past >= day_length:
         hours_past = 0
         date += 1
     if hours_past > 14 and hours_past < 20:
@@ -213,12 +213,12 @@ class Camera: # Camera Class
             self.setting = 0
              #setting 8:
         if keys[pygame.K_8] and self.setting != 8: # key no.8
-            self.setting = 8 # 3D camera
+            self.setting = 8 # 3D camera (to impliment)
         elif keys[pygame.K_8] and self.setting == 8:
             self.setting = 0
               #setting 9:
         if keys[pygame.K_9] and self.setting != 9: # key no.9
-            self.setting = 9 # splitscreen 3D
+            self.setting = 9 # splitscreen 3D (to impliment)
         elif keys[pygame.K_9] and self.setting == 9:
             self.setting = 0           
 
@@ -370,13 +370,14 @@ dt = 0 # Delta Time/Step-Up Clock
 PAUSE = False # For the Pause menu
 interacted = False # Variable to know if a pointer had pressed
 game_levels = [room_0(),room_1()] # List of all avalible levels
+global current_room
 current_room = ("splash_room", width(960), height(540)) # To know which stage we're on
 room_width = current_room[1] # Change Room Dimension
 room_height = current_room[2] # Change Room Dimension
 temporal_measurements = datetime.datetime.now() # Find Date
 splash_trigger = False # Splash trigger
 ##################################################
-### collision testing:
+### Rudimentry Collision Testing:
 ##################################################
 def check_collision(rect1, rect2):
     x1, y1, w1, h1 = rect1
@@ -516,6 +517,21 @@ class Object_0(pygame.sprite.Sprite): ### Object Template, showing features one 
       self.rect = self.image.get_rect()# Set Colision Rectangle
       self.rect.x = x # Rect X
       self.rect.y = y # Rect y
+      # Biography
+      self.gender = random.choice("Male","Female")
+      if self.gender == "Male":    
+        self.fname = random.choice("John", "Carlos", "Ben","Harry", "William")
+      else:
+        self.fname = random.choice("Lauren","Charlotte","Rebecca","Lucy","Mary")
+      self.DOB = "Year: " + random.randrange(str(year) - 10, str(year) - 20) + "  Day: "+ random.randint(year_length)+"."
+     
+      self.mname = [random.choice("Andrew", "Kieran", "Alice","John", "Maggie") ] 
+      if random.choice[0,0,0,1] == 1:
+          self.mname.append(random.choice("Andrew", "Kieran", "Alice","John", "Maggie"))
+
+      self.surname = random.choice("Morrison", "Martins", "Alexis","Gander", "Caines")
+      self.Ethnicity = random.choice("Caucaisan", "African", "South-East", "Euro", "South-West")
+      self.age = random.randint(30)
       # States:
       self.alert = False # whether the object is alerted
       self.moving = False # whether the object is moving
@@ -532,52 +548,69 @@ class Object_0(pygame.sprite.Sprite): ### Object Template, showing features one 
       self.sleep = random.random(100) # sleepy
       # Locals:
       self.needs = []
-      self.task = ""
-      self.hand_left = "Empty" # left hand item
-      self.hand_right = "Empty" # right hand item
+      self.needs.append(random.choice("hunger", "thirst", "social", "hygiene", "toilet"),random.choice("hunger", "thirst", "social", "hygiene", "toilet"),random.choice("hunger", "thirst", "social", "hygiene", "toilet"))
+      self.task = "Nothing"
+      self.hand_left = random.choice(("Empty"),("Food"),("Drink"),("Soap"),("Empty"),("Empty"),("Soap"),("Money")) # left hand item
+      self.hand_right = random.choice(("Empty"),("Food"),("Drink"),("Soap"),("Empty"),("Empty"),("Soap"),("Money")) # right hand item
+      if self.hand_left or self.hand_right == "Money":
+          self.desposit += random.random(100)
       self.carry_threat_value = 0 # determine how much a threat someone is by what they're holding
-      self.speed = 3 # object speed
+      self.speed = random.random(5) # object speed
       self.value = random.random(2000) # object market value
       self.inventory = [] # object invetory
+      self.inventory.append("Nothing")
       self.hostile = False # object temperament
-      self.damage = 5 # base damage
+      self.damage = random.random(10) # base damage
       self.debuff = 2 # base draw back
       self.damage_calc = 0 # varaible for calculation
       self.mutations = [] # potential mutations
+      if random.random(10) == 10:
+       self.mutations.append(random.choice("Tenticle", "Autism", "Third Arm", "Two Penises", "Three Breasts"))
       self.history = [] # journal
+      self.history.append("Born.")
+      self.history.append("Lost their first tooth.")
+      self.history.append("First day of School.")
+      self.history.append("Failed "+ random.choice("Maths", "English", "Spanish", "French", "Biology", "Physics")+".")
+      self.history.append("First kiss, wasn't all they imagined it too be.")
+      self.history.append("They seem to be in melacholy, they didn't want to be stuck up here with me ....")
       # Psychological
-      self.mood = "Sad"
-      self.brain_state = "Healthy"
-      self.mind_activity = "Pondering"
-      self.congition_perdinance = "High"
-      self.emotions = "Low"
-      self.personality = "Welcoming"
-      self.intelligence = "Low"
+      self.mood = random.choice(("Sad", 3),("Happy", 7),("Lonely", 4),("Estatic", 9),("Miserable", 1))
+      self.brain_state = random.choice(("Scizophrenic", 3),("Ego-driven", 7),("Average", 5),("Delusional", 9),("Autism", 4))
+      self.mind_activity = random.choice(("Depressed", 3),("Hyped", 7),("Average", 4),("Estatic", 9),("Flat-lining", 1))
+      self.congition_perdinance = random.choice(("Low", 3),("High", 7),("Mid", 4),("Genuis", 9),("Disabled", 1))
+      self.emotions = random.choice(("Low", 3),("Strong", 7),("Larthargic", 4),("Deep", 9),("Broken", 1))
+      self.personality = random.choice(("Melaocholous", 3),("Positive", 7),("Loner", 4),("Resilient", 9),("Neurtic", 1))
+      self.intelligence = random.choice(("low", 3),("High", 7),("Low-Average", 4),("Genuis", 9),("High-Average", 6))
       self.disposition = [] # Actors disposition to those they meet
       # globals
-      self.job_career = "" 
-      self.deposit = "£0" # bank
+      self.job_career = random.choice("Carpenter", "Security", "Chef", "Model", "Police", "Professional Theif", "Judge", "Paramedic", "Dog-Trainer") 
+      self.deposit = "£: "+ int(random.randint(100)) # bank
       self.friends = [] # social
-      self.address = "Quite close" # address
-      self.transport = "Car - Toyota" # transport
+      self.friends.append(actors[random.randint(len(actors))].personality >= 5)
+      self.address = "SS14" # address
+      self.transport = "Public" # transport
       # Health
-      self.health = 100 # object life
-      self.head = 100 # head vital
-      self.body = 100 # body vital
-      self.shoulders = 100 # shoulders vital
-      self.chest = 100 # chest vital
-      self.left_arm = 100 # left_arm vital
-      self.right_arm = 100 # right_arm vital
-      self.left_leg = 100 # left_leg vital
-      self.right_leg = 100 # right_leg vital
-      self.right_eye = 100 # right_eye vital  
-      self.left_eye = 100 # left_eye vital
-      self.immunity = 0 # immunity
-      self.Lympathic = 0 # infections
-      self.heart = 100 # heart vital
-      self.brain = 100 # brain vital
-      self.liver = 100 # liver
-      self.kidneys = 100 # kidneys
+      self.health = random.random(100)  # object life
+      self.head = random.random(100)  # head vital
+      self.body = random.random(100)  # body vital
+      self.shoulders = random.random(100)  # shoulders vital
+      self.chest = random.random(100)  # chest vital
+      self.left_arm = random.random(100)  # left_arm vital
+      self.right_arm = random.random(100)  # right_arm vital
+      self.left_leg = random.random(100)  # left_leg vital
+      self.right_leg = random.random(100) # right_leg vital
+      self.right_eye = random.random(100)  # right_eye vital  
+      self.left_eye = random.random(100)  # left_eye vital
+      self.Lympathic = random.random(100)  # infections
+      if self.Lympathic > 0:
+        self.immunity = random.random(100)  # immunity
+      else:
+        self.immunity = 0
+     
+      self.heart = random.random(100) # heart vital
+      self.brain = random.random(100) # brain vital
+      self.liver = random.random(100) # liver
+      self.kidneys = random.random(100) # kidneys
       self.stanima = random.random(1)
       # Pathfinding
    def pathfinding(self,goal):
@@ -632,8 +665,10 @@ class Object_0(pygame.sprite.Sprite): ### Object Template, showing features one 
                     return True
          else:
              return True
+         #
    def path_builder(self,tx,ty,direction): #path builder   
        pygame.draw.ellipse(screen, RED, tx,ty, width=5)
+       #
    def GOAT(self): # needs/tasks organisation
     if self.needs:
        if self.needs[len(self.needs)] == "hunger":
@@ -747,6 +782,7 @@ class Object_0(pygame.sprite.Sprite): ### Object Template, showing features one 
 
    def update(self, dt): # Main behaviour loop
      ## Drains/needs:
+     
      if dt % 2:
         self.hunger -= random.random(1)
         self.thirst -= random.random(1)
@@ -769,8 +805,7 @@ class Object_0(pygame.sprite.Sprite): ### Object Template, showing features one 
         if self.social < 10:
             self.needs.append("social") 
         if self.sleep < 30 or night_True_day_False == True:
-            self.needs.append("sleep")          
-
+            self.needs.append("sleep")         
 
 
      ## Animation/Image_edit:
@@ -819,17 +854,18 @@ class Object_1(pygame.sprite.Sprite): ### Object Template, showing features one 
       super().__init__(*groups)
       actors.append(self) # add Player to actors
       list_of_all_objects.append(self) # add Player to list of all objects
-      ## Primary image placeholder:
-      self.img_org =[pygame.image.load(abs_cwd_path_ts+os.path.join("/imgs","####-INSERT_NAME_HERE-####.png")),    
+         ## Primary image placeholder:
+      self.img_org = [pygame.image.load(abs_cwd_path_ts+os.path.join("/imgs","####-INSERT_NAME_HERE-####.png")),    
          abs_cwd_path_ts+os.path.join("/imgs","####-INSERT_NAME_HERE_2-####.png")] # - List Placeholder for second (or more) images for animation # All With Pre-Defined PATH Variable
       ## Secondary image placeholders:
       self.img_attack = [pygame.image.load(abs_cwd_path_ts+os.path.join("/imgs","####-ATTACK_0-####.png")),    
          abs_cwd_path_ts+os.path.join("/imgs","####-ATTACK_1-####.png"),
          abs_cwd_path_ts+os.path.join("/imgs","####-ATTACK_2-####.png")]
+     # Death:
       self.image_death = pygame.image.load(abs_cwd_path_ts+os.path.join("/imgs","####-CORPSE-####.png"))
-      ## Image Loading: (init)
+      # Image Loading: (init)
       self.image = self.img_org[0] # Set Default image
-      self.img_pre_render = 0
+      self.img_pre_render = self.img_org[0]
       # Animation Mechanics 
       self.max_frames = len(self.img_pre_render)
       self.current_frame = 0 ## current frame for animation
@@ -838,7 +874,22 @@ class Object_1(pygame.sprite.Sprite): ### Object Template, showing features one 
       # Object Boundaries/Collision:
       self.rect = self.image.get_rect()# Set Colision Rectangle
       self.rect.x = x # Rect X
-      self.rect.y = y # Rect Y
+      self.rect.y = y # Rect y
+      # Biography
+      self.gender = random.choice("Male","Female")
+      if self.gender == "Male":    
+        self.fname = random.choice("John", "Carlos", "Ben","Harry", "William")
+      else:
+        self.fname = random.choice("Lauren","Charlotte","Rebecca","Lucy","Mary")
+      self.DOB = "Year: " + random.randrange(str(year) - 10, str(year) - 20) + "  Day: "+ random.randint(year_length)+"."
+     
+      self.mname = [random.choice("Andrew", "Kieran", "Alice","John", "Maggie") ] 
+      if random.choice[0,0,0,1] == 1:
+          self.mname.append(random.choice("Andrew", "Kieran", "Alice","John", "Maggie"))
+
+      self.surname = random.choice("Morrison", "Martins", "Alexis","Gander", "Caines")
+      self.Ethnicity = random.choice("Caucaisan", "African", "South-East", "Euro", "South-West")
+      self.age = random.randint(30)
       # States:
       self.alert = False # whether the object is alerted
       self.moving = False # whether the object is moving
@@ -852,52 +903,73 @@ class Object_1(pygame.sprite.Sprite): ### Object Template, showing features one 
       self.hygiene = random.random(100) # clean
       self.social = random.random(100) # social need  
       self.sex = random.random (100) # loneiness
+      self.sleep = random.random(100) # sleepy
       # Locals:
-      self.task = ""
-      self.hand_left = "Empty" # left hand item
-      self.hand_right = "Empty" # right hand item
+      self.needs = []
+      self.needs.append(random.choice("hunger", "thirst", "social", "hygiene", "toilet"),random.choice("hunger", "thirst", "social", "hygiene", "toilet"),random.choice("hunger", "thirst", "social", "hygiene", "toilet"))
+      self.task = "Nothing"
+      self.hand_left = random.choice(("Empty"),("Food"),("Drink"),("Soap"),("Empty"),("Empty"),("Soap"),("Money")) # left hand item
+      self.hand_right = random.choice(("Empty"),("Food"),("Drink"),("Soap"),("Empty"),("Empty"),("Soap"),("Money")) # right hand item
+      if self.hand_left or self.hand_right == "Money":
+          self.desposit += random.random(100)
       self.carry_threat_value = 0 # determine how much a threat someone is by what they're holding
-      self.target = 0 # Player target
-      self.speed = 3 # object speed
+      self.speed = random.random(5) # object speed
       self.value = random.random(2000) # object market value
       self.inventory = [] # object invetory
+      self.inventory.append("Nothing")
       self.hostile = False # object temperament
-      self.damage = 5 # base damage
+      self.damage = random.random(10) # base damage
       self.debuff = 2 # base draw back
       self.damage_calc = 0 # varaible for calculation
       self.mutations = [] # potential mutations
+      if random.random(10) == 10:
+       self.mutations.append(random.choice("Tenticle", "Autism", "Third Arm", "Two Penises", "Three Breasts"))
+      self.history = [] # journal
+      self.history.append("Born.")
+      self.history.append("Lost their first tooth.")
+      self.history.append("First day of School.")
+      self.history.append("Failed "+ random.choice("Maths", "English", "Spanish", "French", "Biology", "Physics")+".")
+      self.history.append("First kiss, wasn't all they imagined it too be.")
+      self.history.append("They seem to be in melacholy, they didn't want to be stuck up here with me ....")
       # Psychological
-      self.mood = "Sad"
-      self.brain_state = "Healthy"
-      self.mind_activity = "Pondering"
-      self.congition_perdinance = "High"
-      self.emotions = "Low"
-      self.personality = "Welcoming"
-      self.intelligence = "Low"
+      self.mood = random.choice(("Sad", 3),("Happy", 7),("Lonely", 4),("Estatic", 9),("Miserable", 1))
+      self.brain_state = random.choice(("Scizophrenic", 3),("Ego-driven", 7),("Average", 5),("Delusional", 9),("Autism", 4))
+      self.mind_activity = random.choice(("Depressed", 3),("Hyped", 7),("Average", 4),("Estatic", 9),("Flat-lining", 1))
+      self.congition_perdinance = random.choice(("Low", 3),("High", 7),("Mid", 4),("Genuis", 9),("Disabled", 1))
+      self.emotions = random.choice(("Low", 3),("Strong", 7),("Larthargic", 4),("Deep", 9),("Broken", 1))
+      self.personality = random.choice(("Melaocholous", 3),("Positive", 7),("Loner", 4),("Resilient", 9),("Neurtic", 1))
+      self.intelligence = random.choice(("low", 3),("High", 7),("Low-Average", 4),("Genuis", 9),("High-Average", 6))
+      self.disposition = [] # Actors disposition to those they meet
       # globals
-      self.job_career = "" 
-      self.deposit = "£0" # bank
+      self.job_career = random.choice("Carpenter", "Security", "Chef", "Model", "Police", "Professional Theif", "Judge", "Paramedic", "Dog-Trainer") 
+      self.deposit = "£: "+ int(random.randint(100)) # bank
       self.friends = [] # social
-      self.address = "Quite close" # address
-      self.transport = "Car - Toyota" # transport
+      self.friends.append(actors[random.randint(len(actors))].personality >= 5)
+      self.address = "SS14" # address
+      self.transport = "Public" # transport
       # Health
-      self.health = 100 # object life
-      self.head = 100 # head vital
-      self.body = 100 # body vital
-      self.shoulders = 100 # shoulders vital
-      self.chest = 100 # chest vital
-      self.left_arm = 100 # left_arm vital
-      self.right_arm = 100 # right_arm vital
-      self.left_leg = 100 # left_leg vital
-      self.right_leg = 100 # right_leg vital
-      self.right_eye = 100 # right_eye vital  
-      self.left_eye = 100 # left_eye vital
-      self.immunity = 0 # immunity
-      self.Lympathic = 0 # infections
-      self.heart = 100 # heart vital
-      self.brain = 100 # brain vital
-      self.liver = 100 # liver
-      self.kidneys = 100 # kidneys
+      self.health = random.random(100)  # object life
+      self.head = random.random(100)  # head vital
+      self.body = random.random(100)  # body vital
+      self.shoulders = random.random(100)  # shoulders vital
+      self.chest = random.random(100)  # chest vital
+      self.left_arm = random.random(100)  # left_arm vital
+      self.right_arm = random.random(100)  # right_arm vital
+      self.left_leg = random.random(100)  # left_leg vital
+      self.right_leg = random.random(100) # right_leg vital
+      self.right_eye = random.random(100)  # right_eye vital  
+      self.left_eye = random.random(100)  # left_eye vital
+      self.Lympathic = random.random(100)  # infections
+      if self.Lympathic > 0:
+        self.immunity = random.random(100)  # immunity
+      else:
+        self.immunity = 0
+     
+      self.heart = random.random(100) # heart vital
+      self.brain = random.random(100) # brain vital
+      self.liver = random.random(100) # liver
+      self.kidneys = random.random(100) # kidneys
+      self.stanima = random.random(1)
       # ... etc etc
    def update(self, dt): # Main behaviour loop
         ## Animation/Image_edit:
@@ -963,12 +1035,12 @@ pygame.init()
 pygame.mixer.init() # audio engine.
 # Pygame/Game intialisation:
 screen = pygame.display.set_mode((width, height)) # set screen dimension
-pygame.display.set_caption("GAME_NAME") ## Change Game title name here
+pygame.display.set_caption("Simulation or Engine, take your bets!") ## Change Game title name here
 clock = pygame.time.Clock() # game clock
 running = True # game running
 ####################################################################################################
 ####################################################################################################
-#Game Functions
+#Game Functions:
 ####################################################################################################
 ####################################################################################################
 # Multiplayer Game Logic:
@@ -1122,22 +1194,40 @@ Client_button = Button_3(0,0,Menu) # Client_button
 #Audio intialisation (PyGBag has some issues with audio, placeholders from a game I made but you get the point!)
 ####################################################################################################
 ####################################################################################################
-#ouch = pygame.mixer.Sound(os.path.abspath(os.getcwd()+os.path.join("/SFX"+"/SFX_Player_Hurt.mp3")))
-#bang = pygame.mixer.Sound(os.path.abspath(os.getcwd()+os.path.join("/SFX"+"/SFX_Pistol.mp3")))                                        
-#shotgun =  pygame.mixer.Sound(os.path.abspath(os.getcwd()+os.path.join("/SFX"+"/SFX_Shotgun.mp3")))    
-#overkill =  pygame.mixer.Sound(os.path.abspath(os.getcwd()+os.path.join("/SFX"+"/SFX_Overkill.mp3")))    
-#rampage =  pygame.mixer.Sound(os.path.abspath(os.getcwd()+os.path.join("/SFX"+"/SFX_Rampage.mp3")))    
-#melee =  pygame.mixer.Sound(os.path.abspath(os.getcwd()+os.path.join("/SFX"+"/SFX_Melee_Grunt.mp3")))    
-#death_enemy =  pygame.mixer.Sound(os.path.abspath(os.getcwd()+os.path.join("/SFX"+"/SFX_Death_Entities.mp3")))    
-#dkill =  pygame.mixer.Sound(os.path.abspath(os.getcwd()+os.path.join("/SFX"+"/SFX_DoubleKill.mp3")))    
-#pygame.mixer.music.load(os.path.abspath(os.getcwd()+os.path.join("/SFX"+"/MSC_Infraction_AI.mp3")))
-#pygame.mixer.music.play()     
+### Sound Effects: (That I don't have the source material for ¬¬)
+class Audi():
+    def __init__(self):
+        pygame.mixer.music.play() 
+    def Music(self):
+        pass 
+    def Sounds(self):
+        pass   
+
+
+ouch = pygame.mixer.Sound(os.path.abspath(os.getcwd()+os.path.join("/SFX"+"/SFX_Player_Hurt.mp3")))
+bang = pygame.mixer.Sound(os.path.abspath(os.getcwd()+os.path.join("/SFX"+"/SFX_Pistol.mp3")))                                        
+shotgun =  pygame.mixer.Sound(os.path.abspath(os.getcwd()+os.path.join("/SFX"+"/SFX_Shotgun.mp3")))    
+overkill =  pygame.mixer.Sound(os.path.abspath(os.getcwd()+os.path.join("/SFX"+"/SFX_Overkill.mp3")))    
+rampage =  pygame.mixer.Sound(os.path.abspath(os.getcwd()+os.path.join("/SFX"+"/SFX_Rampage.mp3")))    
+melee =  pygame.mixer.Sound(os.path.abspath(os.getcwd()+os.path.join("/SFX"+"/SFX_Melee_Grunt.mp3")))    
+death_enemy =  pygame.mixer.Sound(os.path.abspath(os.getcwd()+os.path.join("/SFX"+"/SFX_Death_Entities.mp3")))    
+dkill =  pygame.mixer.Sound(os.path.abspath(os.getcwd()+os.path.join("/SFX"+"/SFX_DoubleKill.mp3")))    
+pygame.mixer.music.load(os.path.abspath(os.getcwd()+os.path.join("/SFX"+"/MSC_Infraction_AI.mp3")))
+pygame.mixer.music.play()     
 ####################################################################################################
 ####################################################################################################
 ## For device touch mechaninics:
 fingers = [] # Touch Register
 ##################################################
-# Primary Game Loop:
+##################################################
+##################################################
+##################################################
+##################################################
+##################################################          # Primary Game Loop:
+##################################################        ################################
+##################################################
+##################################################
+##################################################
 ##################################################
 ##################################################
 ##################################################
@@ -1184,7 +1274,7 @@ async def main(): # Start of game loop
      NPC = Object_0
      Player = Object_1
      Narra = Narrator
-     Audio = 0
+     Audio = Audi
      ROOMS = current_room
      CAMERA = Camera
      
@@ -1500,7 +1590,7 @@ async def main(): # Start of game loop
        Menu.draw(screen) # Draw splash
        pass # Menu to select features
     if ROOM == True: # IF Game Room is True
-       obj_Player = Object_1(0,0,Player_control) # Player_object
+       obj_Player = Object_1(random.random(room_width),random.random(room_height),Player_control) # Player_object
        NPC_MULTI = [] # Registrat for NPCs
        if current_room == game_levels[0]: # if level one
            if Current_Entities < current_room.Max_Entities and i < current_room.Total_Entities: # if there currently less NPC in view and less than the total in the map
@@ -1524,6 +1614,8 @@ async def main(): # Start of game loop
                i += 1 # increade by one
                Current_Entities += 1 # increase by one
                NPC_MULTI.append(Object_0(round(random.random(current_room.room_ROOM_width)),round(random.random(current_room.room_ROOM_height)),Enemy)) ## add enemy/NPC
+               actors.append(NPC_MULTI[len(NPC_MULTI)]) # add NPC to actors
+               list_of_all_objects.append(NPC_MULTI[len(NPC_MULTI)]) # add NPC to list of all objects
            if i == current_room.Total_Entities or i > current_room.Total_Entities:
                   current_room = game_levels[2]
                   i = 0
