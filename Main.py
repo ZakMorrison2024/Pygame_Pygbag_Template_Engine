@@ -70,10 +70,11 @@ PAUSE = False
 Multiplayer = False
 hostname = socket.gethostname()
 My_IP = socket.gethostbyname(hostname)
+PORT = 8080
 Server = False
 Client = False
-Clients = []
 online_host_address = ""
+online_host_port = ""
 ##################################################
 ### GAME SCENES/ROOMS:
 ##################################################
@@ -380,6 +381,26 @@ def handle_client(client_socket, client_address, client_message):
    for client in log.keys():
       client_socket.send(key_value_log.encode())
 
+ except Exception as e:
+        print(f"Error: {e}")
+    finally:
+        client_socket.close()
+
+ #####################
+def start_server():
+    server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server.bind((My_IP, PORT))
+    server.listen(2)
+    print("Server listening on port" +str(PORT))
+
+    client_choices = {}
+
+    while True:
+        client_socket, client_address = server.accept()
+        print(f"Player connected from {client_address}")
+        threading.Thread(target=handle_client, args=(client_socket, client_address, client_choices)).start()
+
+   
    ##################################################
    # Client:
    ##################################################
