@@ -90,7 +90,7 @@ class Camera:
         self.camera = pygame.Rect(0, 0, width, height)
         self.room_width = 0
         self.room_height = 0
-    def apply(self, entity):
+   def apply(self, entity):
         return entity.rect.move(self.camera.topleft)
    def move_manually(self,vx,vy):
         x = -vx + int(self.camera.width / 2)
@@ -354,28 +354,26 @@ class Object_1(pygame.sprite.Sprite): ### Object Template, showing features one 
       # ... etc etc
 
    def update(self, dt): # Main behaviour loop
+         ## Animation/Image_edit:
+         self.image = self.img_pre_render
+         ## LIFE 
+         if self.health <= 0:
+              self.death = True
 
-      ## Animation/Image_edit:
-      self.image = self.img_pre_render
-    
-   ## LIFE 
-   if self.health <= 0:
-        self.death = True
+        if self.death == False: # Check if Alive/Active
 
-  if self.death == False: # Check if Alive/Active
-
-      keys = pygame.key.get_pressed()
-      if keys[pygame.K_w] or keys[pygame.K_UP]:
-        if player.rect.y < room_height and player.rect.y >= 0:
+            keys = pygame.key.get_pressed()
+            if keys[pygame.K_w] or keys[pygame.K_UP]:
+                 if player.rect.y < room_height and player.rect.y >= 0:
                            self.rect.y -= 2
-     elif keys[pygame.K_d] or keys[pygame.K_RIGHT]:
-        if player.rect.x < room_width and player.rect.y >= 0:
+           elif keys[pygame.K_d] or keys[pygame.K_RIGHT]:
+                 if player.rect.x < room_width and player.rect.y >= 0:
                            self.rect.x += 2
-     elif keys[pygame.K_a] or keys[pygame.K_LEFT]:
-        if player.rect.x < room_width and player.rect.y >= 0
+           elif keys[pygame.K_a] or keys[pygame.K_LEFT]:
+                 if player.rect.x < room_width and player.rect.y >= 0
                            self.rect.x -= 2
-     elif keys[pygame.K_s] or keys[pygame.K_DOWN]:
-        if player.rect.y < room_height and player.rect.y >= 0:
+           elif keys[pygame.K_s] or keys[pygame.K_DOWN]:
+                 if player.rect.y < room_height and player.rect.y >= 0:
                            self.rect.y += 2
        
       # Make instance rotate around point (define point by px,py)
